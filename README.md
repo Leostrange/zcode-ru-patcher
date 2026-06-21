@@ -24,6 +24,8 @@
     ·
     <a href="assets/Russian_UI_ZCode.mp4">Смотреть полное MP4-демо</a>
     ·
+    <a href="LEGAL_NOTICE.md">Legal Notice</a>
+    ·
     <a href="https://zcode.z.ai/cn">Официальный сайт ZCode</a>
   </p>
 </div>
@@ -132,4 +134,9 @@ makensis /DPATCHER_DIR="C:\path\to\prepared\patcher" sfx_installer.nsi
 
 ## Лицензия
 
-Исходный код патчера распространяется по лицензии MIT. ZCode, Electron, Chromium, NSIS и другие сторонние компоненты распространяются на условиях их собственных лицензий. Этот репозиторий не передаёт права на ZCode и не включает официальную лицензию Z.ai.
+Исходный код патчера распространяется по лицензии MIT:
+
+- [LICENSE](LICENSE) - оригинальный английский текст.
+- [LICENSE.ru.md](LICENSE.ru.md) - русский перевод.
+
+Юридическое уведомление доступно в [LEGAL_NOTICE.md](LEGAL_NOTICE.md). ZCode, Electron, Chromium, NSIS и другие сторонние компоненты распространяются на условиях их собственных лицензий. Этот репозиторий не передаёт права на ZCode и не включает официальную лицензию Z.ai.
