@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZCode Русификатор v6.1</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Шапка: иконка + заголовок + версия -->
+    <header class="header">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#g)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          <defs><linearGradient id="g" x1="2" y1="2" x2="22" y2="22"><stop stop-color="#3b82f6"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="title-block">
+        <h1>Русификатор</h1>
+        <span class="version">v6.1</span>
+      </div>
+    </header>
+
+    <!-- Секция пути -->
+    <section class="path-section">
+      <label>Папка установки ZCode</label>
+      <div class="path-row">
+        <input type="text" id="pathInput" value="" placeholder="C:\Users\Имя\AppData\Local\Programs\ZCode">
+        <button id="browseBtn" class="btn-icon" title="Обзор">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button id="detectBtn" class="btn-icon" title="Автопоиск">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+      </div>
+      <div id="statusBadge" class="badge">Укажите папку</div>
+    </section>
+
+    <!-- Кнопка установки -->
+    <button id="patchBtn" class="btn-install" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Установить язык</span>
+    </button>
+
+    <!-- Прогресс -->
+    <div class="progress-wrap hidden" id="progressSection">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text" id="progressText">Ожидание...</div>
+    </div>
+
+    <!-- Кнопка отката -->
+    <button id="restoreBtn" class="btn-restore hidden" disabled>Откатить изменения</button>
+
+    <!-- Лог (сворачиваемый) -->
+    <div id="logContainer" class="log hidden"><div id="log"></div></div>
+
+    <!-- Миниплеер: Tokyo Drift — Leostrange -->
+    <footer class="player">
+      <audio id="bgAudio" src="tokyo_drift.mp3" preload="auto" loop></audio>
+      <button class="p-btn" id="playBtn" title="Воспроизведение / пауза">
+        <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+      </button>
+      <div class="p-info">
+        <div class="p-track">Tokyo Drift</div>
+        <div class="p-artist">Leostrange</div>
+      </div>
+      <input type="range" class="p-vol" id="volSlider" min="0" max="100" value="50" title="Громкость">
+      <button class="p-btn p-mute" id="muteBtn" title="Звук вкл/выкл">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+      </button>
+    </footer>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

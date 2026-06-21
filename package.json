@@ -1,0 +1,17 @@
+{
+  "name": "zcode-ru-patcher",
+  "version": "6.1.0",
+  "description": "Неофициальная русификация ZCode для Windows",
+  "main": "main.js",
+  "author": "ZCode Community",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@electron/asar": "^3.4.1"
+  },
+  "devDependencies": {
+    "electron": "^37.2.0"
+  }
+}
