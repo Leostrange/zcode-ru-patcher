@@ -1,46 +1,119 @@
-<video src="assets/Russian_UI_ZCode.mp4" controls width="100%"></video>
+<div align="center">
+  <a href="assets/Russian_UI_ZCode.mp4">
+    <img src="assets/Russian_UI_ZCode_preview.gif" alt="Демо русифицированного интерфейса ZCode" width="100%">
+  </a>
 
-# ZCode RU Patcher
+  <h1>ZCode RU Patcher</h1>
 
-Неофициальная русификация ZCode под Windows. Патчер находит установленный ZCode, создаёт резервную копию `resources/app.asar`, внедряет русскую локаль и дополнительные замены строк интерфейса, после чего пересобирает `app.asar`.
+  <p>
+    <b>Неофициальная русификация ZCode под Windows.</b><br>
+    Патчер устанавливает русский интерфейс, сохраняет резервную копию и умеет откатывать изменения.
+  </p>
 
-Официальный сайт ZCode: https://zcode.z.ai/cn
+  <p>
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.1">
+      <img alt="Release" src="https://img.shields.io/badge/release-v6.1-2563eb?style=for-the-badge">
+    </a>
+    <img alt="Platform" src="https://img.shields.io/badge/platform-Windows-0078d4?style=for-the-badge">
+    <img alt="Electron" src="https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=electron&logoColor=white">
+    <img alt="License" src="https://img.shields.io/badge/license-MIT-16a34a?style=for-the-badge">
+  </p>
 
-> Проект не связан с разработчиками ZCode и не является официальным продуктом Z.ai. Используйте на свой риск и сохраняйте резервные копии.
+  <p>
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.1"><b>Скачать установщик</b></a>
+    ·
+    <a href="assets/Russian_UI_ZCode.mp4">Смотреть полное MP4-демо</a>
+    ·
+    <a href="https://zcode.z.ai/cn">Официальный сайт ZCode</a>
+  </p>
+</div>
 
-## Возможности
+---
 
-- Автоопределение стандартных папок установки ZCode в Windows.
-- Ручной выбор папки установки или файла `app.asar`.
-- Внедрение `ru-RU.json` в приложение.
-- Замена части захардкоженных китайских и английских строк интерфейса.
-- Автоматическое создание бэкапа `app.asar.ru-backup`.
-- Откат изменений из интерфейса патчера.
-- Компактный Electron-интерфейс с прогрессом выполнения.
+## Скриншот русификатора
+
+<p align="center">
+  <img src="assets/zcode-ru-patcher-screenshot.png" alt="Окно ZCode Русификатора v6.1" width="720">
+</p>
+
+## О проекте
+
+ZCode RU Patcher - это компактный Windows-патчер для русификации ZCode. Он находит установленное приложение, создаёт резервную копию `resources/app.asar`, добавляет русский словарь и применяет дополнительные замены строк интерфейса.
+
+Проект не связан с разработчиками ZCode и не является официальным продуктом Z.ai. Используйте патчер на свой риск и сохраняйте резервные копии важных данных.
+
+## Как установить
+
+1. Установите [ZCode](https://zcode.z.ai/cn) с официального сайта.
+2. Если требуется обновить IDE - обновите её перед установкой патча.
+3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.1), запустите его и нажмите `Установить язык`.
+4. Дождитесь завершения процесса. Не запускайте ZCode и не мешайте патчеру, пока установка не закончится.
+
+После каждого обновления ZCode патч придётся установить заново.
+
+## Что умеет
+
+<table>
+  <tr>
+    <td><b>Автопоиск ZCode</b></td>
+    <td>Проверяет стандартные папки установки Windows и подставляет найденный путь.</td>
+  </tr>
+  <tr>
+    <td><b>Ручной выбор</b></td>
+    <td>Позволяет указать папку ZCode или файл <code>app.asar</code> вручную.</td>
+  </tr>
+  <tr>
+    <td><b>Русская локаль</b></td>
+    <td>Внедряет <code>ru-RU.json</code> и переключает интерфейс на русский язык.</td>
+  </tr>
+  <tr>
+    <td><b>Дополнительные замены</b></td>
+    <td>Переводит часть захардкоженных китайских и английских строк.</td>
+  </tr>
+  <tr>
+    <td><b>Безопасный откат</b></td>
+    <td>Создаёт <code>app.asar.ru-backup</code> и восстанавливает исходный файл из интерфейса.</td>
+  </tr>
+  <tr>
+    <td><b>Прогресс установки</b></td>
+    <td>Показывает этапы распаковки, патчинга и пересборки ASAR.</td>
+  </tr>
+</table>
 
 ## Скачать
 
-Готовый установщик публикуется в разделе Releases:
+Готовый установщик находится в разделе Releases:
 
-- `ZCode-Ru-Patcher-v6.1.exe`
+```text
+ZCode-Ru-Patcher-v6.1.exe
+```
 
-## Стек
+Ссылка: https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.1
 
-- JavaScript / Node.js
-- Electron
-- `@electron/asar`
-- HTML / CSS
-- NSIS для Windows SFX-установщика
+## Технологии
+
+| Слой | Используется |
+| --- | --- |
+| Desktop UI | Electron |
+| Runtime | Node.js |
+| Патчинг | `@electron/asar`, файловые API Node.js |
+| Интерфейс | HTML, CSS, JavaScript |
+| Установщик | NSIS |
+| Платформа | Windows |
 
 ## Структура
 
-- `main.js` - главный процесс Electron и IPC-обработчики.
-- `preload.js` - безопасный мост между renderer и main process.
-- `renderer.js` - логика интерфейса, прогресса, установки и отката.
-- `patch-core.js` - обнаружение ZCode, проверка, патчинг, пересборка ASAR и восстановление.
-- `ru-RU.json` - русский словарь интерфейса.
-- `sfx_installer.nsi` - скрипт сборки Windows-установщика.
-- `assets/Russian_UI_ZCode.mp4` - демонстрация русифицированного интерфейса.
+```text
+main.js                  Electron main process и IPC
+preload.js               Безопасный мост renderer -> main
+renderer.js              Логика интерфейса, прогресса и кнопок
+patch-core.js            Обнаружение ZCode, патчинг ASAR, откат
+ru-RU.json               Русский словарь интерфейса
+sfx_installer.nsi        Сборка Windows-установщика
+assets/Russian_UI_ZCode.mp4
+assets/Russian_UI_ZCode_preview.gif
+assets/zcode-ru-patcher-screenshot.png
+```
 
 ## Запуск из исходников
 
@@ -51,7 +124,7 @@ npm start
 
 ## Сборка установщика
 
-Скрипт NSIS ожидает готовые runtime-файлы Electron рядом с исходниками или путь через `PATCHER_DIR`.
+Скрипт NSIS ожидает подготовленные runtime-файлы Electron рядом с исходниками или путь через `PATCHER_DIR`.
 
 ```powershell
 makensis /DPATCHER_DIR="C:\path\to\prepared\patcher" sfx_installer.nsi
