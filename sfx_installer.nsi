@@ -9,14 +9,14 @@ SetCompressorDictSize 64
 !include "MUI2.nsh"
 
 !define PRODUCT_NAME "ZCode Русский Патчер"
-!define PRODUCT_VERSION "6.1"
+!define PRODUCT_VERSION "6.2"
 !define INNER_EXE "ZCodeRuPatcher.exe"
 !ifndef PATCHER_DIR
   !define PATCHER_DIR "."
 !endif
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "ZCode-Ru-Patcher-v6.1.exe"
+OutFile "ZCode-Ru-Patcher-v6.2-new.exe"
 Icon "${PATCHER_DIR}\icon.ico"
 RequestExecutionLevel user
 ShowInstDetails hide
@@ -24,11 +24,11 @@ AutoCloseWindow true
 SilentInstall silent
 WindowIcon off
 
-VIProductVersion "6.1.0.0"
+VIProductVersion "6.2.0.0"
 VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
 VIAddVersionKey "ProductVersion" "${PRODUCT_VERSION}"
 VIAddVersionKey "FileDescription" "Русификатор ZCode"
-VIAddVersionKey "FileVersion" "6.1.0.0"
+VIAddVersionKey "FileVersion" "6.2.0.0"
 
 Section "Main"
   SetOutPath "$PLUGINSDIR\app"
