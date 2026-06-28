@@ -1,6 +1,6 @@
 {
   "name": "zcode-ru-patcher",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "Неофициальная русификация ZCode для Windows",
   "main": "main.js",
   "author": "ZCode Community",

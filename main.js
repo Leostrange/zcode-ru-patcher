@@ -11,7 +11,7 @@ function createWindow() {
     resizable: false,
     maximizable: false,
     minimizable: false,
-    title: 'ZCode Русификатор v6.3',
+    title: 'ZCode Русификатор v6.3.1',
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
