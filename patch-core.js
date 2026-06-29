@@ -210,6 +210,96 @@ const HARDCODED_PATCHES = [
   [/"Process Monitor"/g, '"Монитор процессов"'],
   [/`Process Monitor`/g, '`Монитор процессов`'],
 
+  // --- Верхнее меню / меню окна ---
+  ['"quickPick.command.newTask":`新任务`', '"quickPick.command.newTask":`Новая задача`'],
+  ['"quickPick.command.openWorkspace":`打开工作区`', '"quickPick.command.openWorkspace":`Открыть рабочее пространство`'],
+  ['"quickPick.command.feedback":`问题反馈`', '"quickPick.command.feedback":`Сообщить о проблеме`'],
+  ['"quickPick.command.community":`用户社群`', '"quickPick.command.community":`Сообщество пользователей`'],
+  ['"quickPick.command.productDocs":`产品文档`', '"quickPick.command.productDocs":`Документация продукта`'],
+  ['"workspaceHeader.help.issueReport":`问题上报`', '"workspaceHeader.help.issueReport":`Сообщить о проблеме`'],
+  ['"workspaceHeader.help.productRequest":`给产品提需求`', '"workspaceHeader.help.productRequest":`Предложить улучшение`'],
+  ['"workspaceHeader.help.productRequestDraft":`我想建议：`', '"workspaceHeader.help.productRequestDraft":`Хочу предложить: `'],
+  ['"workspaceHeader.help.community":`用户社群`', '"workspaceHeader.help.community":`Сообщество пользователей`'],
+  ['"workspaceHeader.help.docs":`产品文档`', '"workspaceHeader.help.docs":`Документация продукта`'],
+  ['"titleBar.menu.file.newTask":`新建任务`', '"titleBar.menu.file.newTask":`Новая задача`'],
+  ['"titleBar.menu.file.openWorkspace":`打开工作区`', '"titleBar.menu.file.openWorkspace":`Открыть рабочее пространство`'],
+  ['"titleBar.menu.file.closeWindow":`关闭窗口`', '"titleBar.menu.file.closeWindow":`Закрыть окно`'],
+  ['"titleBar.menu.help.about":`关于 ZCode`', '"titleBar.menu.help.about":`О ZCode`'],
+  ['"titleBar.menu.help.checkForUpdates":`检查更新`', '"titleBar.menu.help.checkForUpdates":`Проверить обновления`'],
+  ['"titleBar.menu.help.feedback":`问题反馈`', '"titleBar.menu.help.feedback":`Сообщить о проблеме`'],
+  ['"titleBar.menu.help.exportLogs":`导出日志`', '"titleBar.menu.help.exportLogs":`Экспортировать логи`'],
+  ['"titleBar.menu.help.processMonitor":`进程监视器`', '"titleBar.menu.help.processMonitor":`Монитор процессов`'],
+  ['"sidebar.menu.community":`用户社群`', '"sidebar.menu.community":`Сообщество пользователей`'],
+  ['"appHeader.openInFileExplorer":`在资源管理器中打开`', '"appHeader.openInFileExplorer":`Открыть в Проводнике`'],
+
+  // --- Плагины / навыки / команды / субагенты ---
+  ['"settings.plugins.title":`插件管理`', '"settings.plugins.title":`Плагины`'],
+  ['"settings.plugins.betaBadge":`测试`', '"settings.plugins.betaBadge":`Бета`'],
+  ['"settings.plugins.description":`启用或停用已安装的插件。插件可打包技能、命令、Hooks 和 MCP 服务器。`', '"settings.plugins.description":`Включайте или отключайте установленные плагины. Плагины могут содержать навыки, команды, hooks и MCP-серверы.`'],
+  ['"settings.plugins.filter.label":`启用状态`', '"settings.plugins.filter.label":`Состояние`'],
+  ['"settings.plugins.footerSummary":`共 {total} 个插件 · {enabled} 个已启用`', '"settings.plugins.footerSummary":`Всего плагинов: {total} · включено: {enabled}`'],
+  ['"settings.plugins.searchPlaceholder":`搜索插件...`', '"settings.plugins.searchPlaceholder":`Поиск плагинов...`'],
+  ['"settings.plugins.refresh":`刷新`', '"settings.plugins.refresh":`Обновить`'],
+  ['"settings.plugins.refreshing":`刷新中...`', '"settings.plugins.refreshing":`Обновление...`'],
+  ['"settings.plugins.empty":`没有找到插件`', '"settings.plugins.empty":`Плагины не найдены`'],
+  ['"settings.plugins.noWorkspace":`打开一个工作区以管理插件。`', '"settings.plugins.noWorkspace":`Откройте рабочее пространство, чтобы управлять плагинами.`'],
+  ['"settings.plugins.source.builtin":`内置`', '"settings.plugins.source.builtin":`Встроенный`'],
+  ['"settings.plugins.tab.installed":`已安装`', '"settings.plugins.tab.installed":`Установленные`'],
+  ['"settings.plugins.tab.marketplace":`发现`', '"settings.plugins.tab.marketplace":`Каталог`'],
+  ['"settings.plugins.installed.title":`已安装`', '"settings.plugins.installed.title":`Установленные`'],
+  ['"settings.plugins.marketplaces.count":`{count} 个市场`', '"settings.plugins.marketplaces.count":`Каталогов: {count}`'],
+  ['"settings.plugins.marketplaces.plugins":`{count} 个插件`', '"settings.plugins.marketplaces.plugins":`Плагинов: {count}`'],
+  ['"settings.plugins.marketplace.searchResults":`匹配 {count} 个插件`', '"settings.plugins.marketplace.searchResults":`Найдено плагинов: {count}`'],
+  ['"settings.plugins.marketplace.groupCount":`{count} 个插件`', '"settings.plugins.marketplace.groupCount":`Плагинов: {count}`'],
+  ['"settings.plugins.marketplace.hiddenInstalledCount":`还有 {count} 个`', '"settings.plugins.marketplace.hiddenInstalledCount":`Ещё {count}`'],
+  ['"settings.pluginManaged.badge":`Plugin`', '"settings.pluginManaged.badge":`Плагин`'],
+  ['"settings.pluginManaged.modifyInPlugin":`由插件注册，修改请到对应插件中进行。`', '"settings.pluginManaged.modifyInPlugin":`Зарегистрировано плагином. Редактируйте это в плагине.`'],
+
+  ['"settings.subagents.title":`子智能体`', '"settings.subagents.title":`Субагенты`'],
+  ['"settings.subagents.description":`管理 ZCode Agent 运行时消费的用户级子智能体 Markdown 文件。`', '"settings.subagents.description":`Управление пользовательскими Markdown-файлами субагентов, которые использует ZCode Agent.`'],
+  ['"settings.subagents.searchPlaceholder":`搜索子智能体...`', '"settings.subagents.searchPlaceholder":`Поиск субагентов...`'],
+  ['"settings.subagents.empty":`没有找到子智能体`', '"settings.subagents.empty":`Субагенты не найдены`'],
+  ['"settings.subagents.addNew":`新建子智能体`', '"settings.subagents.addNew":`Новый субагент`'],
+  ['"settings.subagents.group.user":`用户子智能体`', '"settings.subagents.group.user":`Пользовательские субагенты`'],
+  ['"settings.subagents.group.plugin":`插件子智能体`', '"settings.subagents.group.plugin":`Субагенты плагинов`'],
+  ['"settings.subagents.group.plugin.hint":`插件 profile 来自已启用插件，当前只读。`', '"settings.subagents.group.plugin.hint":`Профили плагинов поступают из включенных плагинов и сейчас доступны только для чтения.`'],
+  ['"settings.subagents.group.builtIn":`内置子智能体`', '"settings.subagents.group.builtIn":`Встроенные субагенты`'],
+  ['"settings.subagents.group.builtIn.hint":`内置 profile 是运行时默认能力，当前不可在这里编辑。`', '"settings.subagents.group.builtIn.hint":`Встроенные профили являются возможностями runtime по умолчанию; здесь их нельзя редактировать.`'],
+  ['"settings.subagents.scope.builtIn":`内置`', '"settings.subagents.scope.builtIn":`Встроенный`'],
+  ['"settings.subagents.scope.plugin":`插件`', '"settings.subagents.scope.plugin":`Плагин`'],
+  ['"settings.subagents.scope.workspace":`工作区`', '"settings.subagents.scope.workspace":`Рабочее пространство`'],
+  ['"settings.subagents.scope.label":`作用域`', '"settings.subagents.scope.label":`Область`'],
+  ['"settings.subagents.filter.all":`全部`', '"settings.subagents.filter.all":`Все`'],
+  ['"settings.subagents.filter.enabled":`已启用`', '"settings.subagents.filter.enabled":`Включенные`'],
+  ['"settings.subagents.filter.disabled":`已停用`', '"settings.subagents.filter.disabled":`Отключенные`'],
+  ['"settings.subagents.footerSummary":`共 {total} 个子智能体 · {enabled} 个已启用`', '"settings.subagents.footerSummary":`Всего субагентов: {total} · включено: {enabled}`'],
+  ['"settings.subagents.toolsCount":`{count} 个工具`', '"settings.subagents.toolsCount":`Инструментов: {count}`'],
+  ['"settings.subagents.tools.inherit":`继承工具`', '"settings.subagents.tools.inherit":`Наследовать инструменты`'],
+  ['"settings.subagents.tools.all":`全部工具`', '"settings.subagents.tools.all":`Все инструменты`'],
+  ['"settings.subagents.form.model.help":`继承默认`', '"settings.subagents.form.model.help":`Наследовать значение по умолчанию`'],
+  ['"settings.subagents.form.maxTurns.placeholder":`继承默认`', '"settings.subagents.form.maxTurns.placeholder":`Наследовать значение по умолчанию`'],
+  ['"settings.subagents.form.tools.inheritAll":`继承全部`', '"settings.subagents.form.tools.inheritAll":`Наследовать все`'],
+  ['"settings.subagents.model.inherit":`继承默认`', '"settings.subagents.model.inherit":`Наследовать значение по умолчанию`'],
+
+  ['"settings.commands.group.plugin":`插件命令`', '"settings.commands.group.plugin":`Команды плагинов`'],
+  ['"settings.commands.sourceFilterLabel":`来源筛选`', '"settings.commands.sourceFilterLabel":`Источник`'],
+  ['"settings.commands.searchPlaceholder":`搜索命令...`', '"settings.commands.searchPlaceholder":`Поиск команд...`'],
+  ['"settings.commands.import.itemCount":`{count} 个命令`', '"settings.commands.import.itemCount":`Команд: {count}`'],
+  ['"settings.commands.noDescription":`暂无描述`', '"settings.commands.noDescription":`Нет описания`'],
+
+  ['"settings.skills.group.local":`工作区与个人技能`', '"settings.skills.group.local":`Навыки рабочего пространства и личные`'],
+  ['"settings.skills.group.plugin":`Plugin 技能`', '"settings.skills.group.plugin":`Навыки плагинов`'],
+  ['"settings.skills.filter.all":`全部`', '"settings.skills.filter.all":`Все`'],
+  ['"settings.skills.filter.label":`来源筛选`', '"settings.skills.filter.label":`Источник`'],
+  ['"settings.resourceFilter.all":`全部`', '"settings.resourceFilter.all":`Все`'],
+  ['"settings.skills.footerSummary":`共 {total} 个技能 · {enabled} 个已启用`', '"settings.skills.footerSummary":`Всего навыков: {total} · включено: {enabled}`'],
+  ['"settings.skills.import.skillCount":`{count} 个技能`', '"settings.skills.import.skillCount":`Навыков: {count}`'],
+  ['"settings.skills.import.itemCount":`{count} 个技能`', '"settings.skills.import.itemCount":`Навыков: {count}`'],
+
+  ['"modelTrajectory.source.subagent":`子智能体`', '"modelTrajectory.source.subagent":`Субагент`'],
+  ['"chat.toolCall.agent.backgroundActivityReceived":`已收到子智能体回传`', '"chat.toolCall.agent.backgroundActivityReceived":`Получен ответ субагента`'],
+  ['"chat.toolCall.agent.backgroundActivityWaiting":`等待子智能体回传`', '"chat.toolCall.agent.backgroundActivityWaiting":`Ожидание ответа субагента`'],
+
   // --- Reset zoom ---
   [/"Reset zoom and pan"/g, '"Сбросить масштаб и прокрутку"'],
   [/`Reset zoom and pan`/g, '`Сбросить масштаб и прокрутку`'],
@@ -438,6 +528,147 @@ const HARDCODED_PATCHES = [
 
   // --- Описание проблемы ---
   ['`我在这个任务里遇到了问题，请帮忙排查。`', '`Возникла проблема в этой задаче, помогите разобраться.`'],
+
+  // ============================================================
+  // v6.3.2 — Changelog / Release Notes модалка
+  // ============================================================
+
+  // --- Заголовки секций changelog ---
+  ['更新日志', 'Список изменений'],
+  ['`更新日志`', '`Список изменений`'],
+  ['"更新日志"', '"Список изменений"'],
+  ['新功能', 'Новые функции'],
+  ['`新功能`', '`Новые функции`'],
+  ['"新功能"', '"Новые функции"'],
+  ['问题修复', 'Исправления'],
+  ['`问题修复`', '`Исправления`'],
+  ['"问题修复"', '"Исправления"'],
+  ['已修复', 'Исправлено'],
+  ['`已修复`', '`Исправлено`'],
+  ['"已修复"', '"Исправлено"'],
+  ['改进', 'Улучшения'],
+  ['`改进`', '`Улучшения`'],
+  ['"改进"', '"Улучшения"'],
+
+  // --- Changelog-описания (частые паттерны v3.2.0) ---
+  ['新增支持插件管理和自定义添加插件 beta。', 'Добавлена поддержка управления плагинами и пользовательского добавления плагинов (beta).'],
+  ['`新增支持插件管理和自定义添加插件 beta。`', '`Добавлена поддержка управления плагинами и пользовательского добавления плагинов (beta).`'],
+  ['新增通用型子智能体，支持自定义读写权限和模型。', 'Добавлен универсальный субагент с настраиваемыми правами чтения/записи и выбором модели.'],
+  ['`新增通用型子智能体，支持自定义读写权限和模型。`', '`Добавлен универсальный субагент с настраиваемыми правами чтения/записи и выбором модели.`'],
+  ['长文本粘贴会自动转为附件。', 'Длинный текст при вставке автоматически становится вложением.'],
+  ['`长文本粘贴会自动转为附件。`', '`Длинный текст при вставке автоматически становится вложением.`'],
+  ['计划模式退出后会恢复原来的模式。', 'При выходе из режима плана восстанавливается предыдущий режим.'],
+  ['`计划模式退出后会恢复原来的模式。`', '`При выходе из режима плана восстанавливается предыдущий режим.`'],
+  ['更新前会先完成必要版本检查。', 'Перед обновлением выполняется проверка совместимости версий.'],
+  ['`更新前会先完成必要版本检查。`', '`Перед обновлением выполняется проверка совместимости версий.`'],
+  ['优化压缩逻辑。', 'Оптимизирована логика сжатия.'],
+  ['`优化压缩逻辑。`', '`Оптимизирована логика сжатия.`'],
+  ['优化windows任务体验。', 'Улучшен интерфейс задач Windows.'],
+  ['`优化windows任务体验。`', '`Улучшен интерфейс задач Windows.`'],
+  ['安装插件后自动启用（推荐确认插件来源安全后再安装）。', 'Плагин автоматически включается после установки (рекомендуется проверять источник).'],
+  ['`安装插件后自动启用（推荐确认插件来源安全后再安装）。`', '`Плагин автоматически включается после установки (рекомендуется проверять источник).`'],
+
+  // --- Общие changelog-шаблоны ---
+  ['新增', 'Добавлено'],
+  ['`新增`', '`Добавлено`'],
+  ['"新增"', '"Добавлено"'],
+  ['优化', 'Оптимизировано'],
+  ['`优化`', '`Оптимизировано`'],
+  ['"优化"', '"Оптимизировано"'],
+  ['修复', 'Исправлено'],
+  ['`修复`', '`Исправлено`'],
+  ['"修复"', '"Исправлено"'],
+  ['改进了', 'Улучшено'],
+  ['`改进了`', '`Улучшено`'],
+  ['"改进了"', '"Улучшено"'],
+
+  // --- Кнопка/ссылка "Обновить" ---
+  ['`Обновить`', '`Обновить`'],
+  ['Проверка обновлений...', 'Проверка обновлений...'],
+
+  // --- Неизвестные новые функции (fallback паттерны) ---
+  ['新增支持', 'Добавлена поддержка'],
+  ['`新增支持`', '`Добавлена поддержка`'],
+  ['支持自定义', 'Поддержка настройки'],
+  ['`支持自定义`', '`Поддержка настройки`'],
+  ['自定义添加', 'Пользовательское добавление'],
+  ['`自定义添加`', '`Пользовательское добавление`'],
+  ['自动启用', 'Автоматическое включение'],
+  ['`自动启用`', '`Автоматическое включение`'],
+  ['自动转为', 'Автоматически становится'],
+  ['`自动转为`', '`Автоматически становится`'],
+  ['退出后会恢复', 'При выходе восстанавливается'],
+  ['`退出后会恢复`', '`При выходе восстанавливается`'],
+  ['先完成必要', 'Сначала выполняется'],
+  ['`先完成必要`', '`Сначала выполняется`'],
+
+  // --- Прочие UI-строки, которые могут проступить на китайском ---
+  ['`版本`', '`Версия`'],
+  ['"版本"', '"Версия"'],
+  ['`当前版本`', '`Текущая версия`'],
+  ['"当前版本"', '"Текущая версия"'],
+  ['`最新版本`', '`Последняя версия`'],
+  ['"最新版本"', '"Последняя версия"'],
+  ['`已是最新版本`', '`Уже последняя версия`'],
+  ['"已是最新版本"', '"Уже последняя версия"'],
+  ['`没有更新`', '`Обновлений нет`'],
+  ['"没有更新"', '"Обновлений нет"'],
+
+  // ============================================================
+  // Универсальные шаблоны для чейнджлога (будущие версии)
+  // ============================================================
+
+  // --- Заголовки секций (без backticks/кавычек — для инлайн-контента) ---
+  ['性能优化', 'Оптимизации производительности'],
+  ['界面改进', 'Улучшения интерфейса'],
+  ['安全修复', 'Исправления безопасности'],
+  ['稳定性改进', 'Улучшения стабильности'],
+  ['兼容性修复', 'Исправления совместимости'],
+  ['已知问题', 'Известные проблемы'],
+  ['重大变更', 'Важные изменения'],
+  [' breaking changes', 'Ключевые изменения'],
+  ['文档更新', 'Обновление документации'],
+  ['依赖更新', 'Обновление зависимостей'],
+
+  // --- Частые глаголы/обороты в чейнджлоге ---
+  ['提升了', 'Повышена'],
+  ['降低了', 'Снижена'],
+  ['修复了', 'Исправлено'],
+  ['新增了', 'Добавлено'],
+  ['优化了', 'Оптимизировано'],
+  ['改进了', 'Улучшено'],
+  ['删除了', 'Удалено'],
+  ['重命名了', 'Переименовано'],
+  ['移除了', 'Удалено'],
+  ['增加了', 'Добавлено'],
+  ['减少了', 'Уменьшено'],
+  ['支持了', 'Добавлена поддержка'],
+  ['实现了', 'Реализовано'],
+  ['解决了', 'Решено'],
+
+  // --- Описания изменений (частые паттерны) ---
+  ['用户体验', 'Пользовательский опыт'],
+  ['响应速度', 'Скорость отклика'],
+  ['内存占用', 'Потребление памяти'],
+  ['启动速度', 'Скорость запуска'],
+  ['文件读写', 'Чтение/запись файлов'],
+  ['代码补全', 'Дополнение кода'],
+  ['语法高亮', 'Подсветка синтаксиса'],
+  ['自动保存', 'Автосохранение'],
+  ['快捷键', 'Горячие клавиши'],
+  ['设置页面', 'Страница настроек'],
+  ['主题切换', 'Переключение темы'],
+  ['插件市场', 'Магазин плагинов'],
+  ['终端集成', 'Интеграция терминала'],
+  ['调试功能', 'Функции отладки'],
+  ['版本控制', 'Контроль версий'],
+  ['多人协作', 'Совместная работа'],
+  ['云端同步', 'Облачная синхронизация'],
+  ['离线模式', 'Офлайн-режим'],
+  ['暗色模式', 'Тёмная тема'],
+  ['浅色模式', 'Светлая тема'],
+  ['国际化', 'Интернационализация'],
+  ['本地化', 'Локализация'],
 ];
 
 function resolveAsarSource(input) {
@@ -535,6 +766,52 @@ function applyHardcodedPatches(code) {
     if (code !== before) count++;
   }
   return { code, count };
+}
+
+function patchRuntimeReasoningLanguage(tempExtract, push) {
+  const marker = 'ZCODE_RU_REASONING_LANG';
+  const instruction = '[ZCODE_RU_REASONING_LANG: все видимые внутренние рассуждения, thought/reasoning-блоки, промежуточные размышления и финальный ответ пиши на русском языке, если пользователь явно не попросил другой язык.]';
+  const safeInstruction = instruction.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+  const helper = 'function ZRU_reasoningRu(e){if(typeof e!==`string`)return e;if(e.includes(`' + marker + '`))return e;return e+`\\n\\n' + safeInstruction + '`}';
+  const targetDirs = [
+    path.join(tempExtract, 'out', 'host'),
+    path.join(tempExtract, 'out', 'main'),
+  ];
+  const files = [];
+  for (const dir of targetDirs) {
+    if (!fs.existsSync(dir)) continue;
+    for (const name of fs.readdirSync(dir)) {
+      if (name.endsWith('.js')) files.push(path.join(dir, name));
+    }
+  }
+
+  let patchedFiles = 0;
+  const sendPattern = /function ([A-Za-z0-9_$]+)\(e,t,n,o=new Set\)\{let r=e\.integratedTerminalShell!==void 0&&!o\.has\("integratedTerminalShell"\);return\{sessionId:e\.sessionId,inputId:e\.inputId,queryId:e\.queryId,content:e\.content,attachments:e\.attachments,expectedRevision:e\.expectedRevision,expectedProviderRevision:e\.expectedProviderRevision,expectedModelRuntimeRevision:e\.expectedModelRuntimeRevision\?\?n,runtimeModel:t,\.\.\.r\?\{integratedTerminalShell:e\.integratedTerminalShell\}:\{\}\}\}s\(\1,"buildSessionSendParams"\)/;
+  const steerPattern = /content:y\.content,expectedTurnId:y\.expectedTurnId/g;
+  const steerReplacement = 'content:ZRU_reasoningRu(y.content),expectedTurnId:y.expectedTurnId';
+  const runtimeTextPatches = [
+    ['description:"General-purpose agent for researching complex questions, searching for code, and executing multi-step tasks."', 'description:"Универсальный агент для исследования сложных вопросов, поиска по коду и выполнения многошаговых задач."'],
+    ['description:"Read-only search agent for broad fan-out searches."', 'description:"Агент поиска только для чтения, предназначенный для широких параллельных исследований."'],
+  ];
+
+  for (const filePath of files) {
+    let code = fs.readFileSync(filePath, 'utf-8');
+    const before = code;
+    if (!code.includes(marker)) {
+      code = code.replace(sendPattern, (match) => helper + match.replace('content:e.content', 'content:ZRU_reasoningRu(e.content)'));
+    }
+    code = code.replace(steerPattern, steerReplacement);
+    for (const [from, to] of runtimeTextPatches) {
+      code = code.split(from).join(to);
+    }
+    if (code !== before) {
+      fs.writeFileSync(filePath, code, 'utf-8');
+      patchedFiles++;
+      push('ok', 'Runtime reasoning-lang патч: ' + path.relative(tempExtract, filePath));
+    }
+  }
+  push(patchedFiles > 0 ? 'ok' : 'warn', 'Runtime файлов с русскими рассуждениями пропатчено: ' + patchedFiles);
+  return patchedFiles;
 }
 
 function loadRuDictionary() {
@@ -991,7 +1268,7 @@ async function patch(input, opts = {}) {
       const backupPath = info.backupPath;
       tempExtract = path.join(path.dirname(asarPath), '_temp_ru_patch');
 
-      onProgress(1, TOTAL, 'Шаг 1/6: Бэкап...', 'info');
+      onProgress(1, TOTAL, 'Шаг 1/7: Бэкап...', 'info');
       const src = asarSource ? resolveAsarSource(asarSource) : asarPath;
       if (!fs.existsSync(src)) {
         throw new Error('app.asar не найден: ' + src);
@@ -1006,12 +1283,12 @@ async function patch(input, opts = {}) {
         push('warn', 'Бэкап уже существует, пропускаю');
       }
 
-      onProgress(2, TOTAL, 'Шаг 2/6: Распаковка...', 'info');
+      onProgress(2, TOTAL, 'Шаг 2/7: Распаковка...', 'info');
       try { fs.rmSync(tempExtract, { recursive: true, force: true }); } catch {}
       asar.extractAll(src, tempExtract);
       push('ok', 'Распаковано из ' + path.basename(src));
 
-      onProgress(3, TOTAL, 'Шаг 3/6: Поиск файлов...', 'info');
+      onProgress(3, TOTAL, 'Шаг 3/7: Поиск файлов...', 'info');
       const assetsDir = path.join(tempExtract, 'out', 'renderer', 'assets');
       if (!fs.existsSync(assetsDir)) {
         throw new Error('Не найдена папка assets — возможно, другая версия ZCode');
@@ -1021,7 +1298,7 @@ async function patch(input, opts = {}) {
         throw new Error('Не найдены .js файлы в assets');
       }
 
-      onProgress(4, TOTAL, 'Шаг 4/6: Переводы...', 'info');
+      onProgress(4, TOTAL, 'Шаг 4/7: Переводы...', 'info');
       let translated = 0;
       let dictPatchedCount = 0;
       const ruDict = loadRuDictionary();
@@ -1096,6 +1373,7 @@ async function patch(input, opts = {}) {
         }
       }
       push(hardcodedCount > 0 ? 'ok' : 'warn', 'Захардкоженных строк пропатчено: ' + hardcodedCount);
+      const runtimeReasoningPatchedCount = patchRuntimeReasoningLanguage(tempExtract, push);
 
       onProgress(6, TOTAL, 'Шаг 6/7: Проверка внедрений...', 'info');
 
@@ -1103,7 +1381,7 @@ async function patch(input, opts = {}) {
       const pluginPatchedCount = patchGlmPackageMetadata(info.root, push);
       const skillPatchedCount = patchSkillMetadata(info.root, push);
 
-      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0) {
+      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0) {
         throw new Error('Ни одна замена не сработала — версия ZCode не поддерживается этим патчем');
       }
 
