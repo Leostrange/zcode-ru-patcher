@@ -161,6 +161,27 @@ const HARDCODED_PATCHES = [
   [/"Determines the markup language of the output\."/g, '"Определяет язык разметки вывода."'],
   [/`Determines the markup language of the output.`/g, '`Определяет язык разметки вывода.`'],
 
+  // --- Очистка смешанных русско-китайских строк после прошлых патчей ---
+  ['О共享ное окно рабочего стола закрыто. Вернитесь к рабочему столу и снова запустите веб-дистанционное управление.', 'Окно рабочего стола закрыто. Вернитесь к рабочему столу и снова запустите веб-дистанционное управление.'],
+  ['Развернуть панель长时间运行', 'Развернуть панель длительных задач'],
+  ['Свернуть панель长时间运行', 'Свернуть панель длительных задач'],
+  ['的理想 поведение', 'идеальное поведение'],
+  ['Reasoning (задачи рассуждения)', 'Рассуждения (логические задачи)'],
+  ['Общие квоты, управление席位ами и централизованная оплата.', 'Общие квоты, управление местами и централизованная оплата.'],
+  ['席位ы, общие квоты и централизованная оплата будут доступны позже.', 'Места, общие квоты и централизованная оплата будут доступны позже.'],
+  ['Для команд, поддержка席атов и централизованной оплаты.', 'Для команд: места, общие квоты и централизованная оплата.'],
+  ['Разграничение прав по席位ам', 'Разграничение прав по местам'],
+  ['席位ы в плане', 'Места в плане'],
+  ['Сумма на QR-коде — итоговая стоимость по числу席атов и сроку.', 'Сумма на QR-коде — итоговая стоимость по числу мест и сроку.'],
+  ['Вы даёте согласие на автопродление. Выберите способ, число席атов и срок, затем подтвердите сумму.', 'Вы даёте согласие на автопродление. Выберите способ оплаты, количество мест и срок, затем подтвердите сумму.'],
+  ['Количество席атов', 'Количество мест'],
+  ['Цена за席位', 'Цена за место'],
+  ['{price}/席/мес.', '{price}/место/мес.'],
+  ['/席/мес.', '/место/мес.'],
+  ['/席/кв.', '/место/кв.'],
+  ['/席/год', '/место/год'],
+  ['席位', 'мест'],
+
   // --- Усилие (Effort) ---
   [/"Effort"/g, '"Усилие"'],
   [/`Effort`/g, '`Усилие`'],
@@ -378,7 +399,7 @@ const HARDCODED_PATCHES = [
   // --- Coding Plan: описание планов (hardcoded) ---
   ['`适合个人开发者，独享 Coding Plan 额度。`', '`Для индивидуальных разработчиков, собственная квота.`'],
   ['`免费体验平台 GLM 旗舰模型额度。`', '`Бесплатный пробный доступ к флагманским моделям GLM.`'],
-  ['`适合团队协作，支持席位和集中结算。`', '`Для команд, поддержка席атов и централизованной оплаты.`'],
+  ['`适合团队协作，支持席位和集中结算。`', '`Для команд: места, общие квоты и централизованная оплата.`'],
   ['`5x Lite 额度 + Lite 权益`', '`5x квота Lite + возможности Lite`'],
   ['`20x Lite 额度 + Pro 权益`', '`20x квота Lite + возможности Pro`'],
   ['`每周最多：3亿 tokens`', '`До 300 млн токенов в неделю`'],
@@ -514,6 +535,111 @@ function applyHardcodedPatches(code) {
     if (code !== before) count++;
   }
   return { code, count };
+}
+
+function loadRuDictionary() {
+  try {
+    const ruJsonPath = path.join(__dirname, 'ru-RU.json');
+    process.noAsar = false;
+    if (fs.existsSync(ruJsonPath)) {
+      return JSON.parse(fs.readFileSync(ruJsonPath, 'utf-8'));
+    }
+  } catch {
+    return {};
+  } finally {
+    process.noAsar = true;
+  }
+  return {};
+}
+
+function buildRuLocaleObjectString(ruDict) {
+  const ruParts = Object.entries(ruDict).map(([k, v]) => {
+    const ek = k.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    const ev = String(v).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+    return '"' + ek + '":`' + ev + '`';
+  });
+  return '{' + ruParts.join(',') + '}';
+}
+
+function findBalancedCallEnd(code, parenStart) {
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  for (let i = parenStart; i < code.length; i++) {
+    const ch = code[i];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch;
+      continue;
+    }
+    if (ch === '(') depth++;
+    else if (ch === ')') {
+      depth--;
+      if (depth === 0) return i + 1;
+    }
+  }
+  return -1;
+}
+
+function parseObjectAssignAt(code, valueStart) {
+  const prefix = 'Object.assign(';
+  if (!code.startsWith(prefix, valueStart)) return null;
+  const parenStart = valueStart + 'Object.assign'.length;
+  const end = findBalancedCallEnd(code, parenStart);
+  if (end === -1) return null;
+  const expr = code.slice(valueStart, end);
+  const baseMatch = /^Object\.assign\(\{\},([a-zA-Z0-9_$]+),/.exec(expr);
+  if (!baseMatch) return null;
+  return { end, baseVar: baseMatch[1] };
+}
+
+function refreshPatchedRuLocaleObjects(code, ruObjStr) {
+  let out = code;
+  let count = 0;
+  let searchFrom = 0;
+  const marker = '"zh-CN":Object.assign(';
+
+  while (true) {
+    const markerIndex = out.indexOf(marker, searchFrom);
+    if (markerIndex === -1) break;
+
+    const zhValueStart = markerIndex + '"zh-CN":'.length;
+    const zhAssign = parseObjectAssignAt(out, zhValueStart);
+    if (!zhAssign) {
+      searchFrom = markerIndex + marker.length;
+      continue;
+    }
+
+    const ruKey = /^\s*,\s*"ru-RU"\s*:/.exec(out.slice(zhAssign.end, zhAssign.end + 80));
+    if (!ruKey) {
+      searchFrom = zhAssign.end;
+      continue;
+    }
+
+    const ruValueStart = zhAssign.end + ruKey[0].length;
+    const ruAssign = parseObjectAssignAt(out, ruValueStart);
+    if (!ruAssign) {
+      searchFrom = zhAssign.end;
+      continue;
+    }
+
+    const replacement = `"zh-CN":Object.assign({},${zhAssign.baseVar},${ruObjStr}),"ru-RU":Object.assign({},${zhAssign.baseVar},${ruObjStr})`;
+    const current = out.slice(markerIndex, ruAssign.end);
+    if (current !== replacement) {
+      out = out.slice(0, markerIndex) + replacement + out.slice(ruAssign.end);
+      count++;
+      searchFrom = markerIndex + replacement.length;
+    } else {
+      searchFrom = ruAssign.end;
+    }
+  }
+
+  return { code: out, count };
 }
 
 function applyVisibleUiPatches(code) {
@@ -898,6 +1024,8 @@ async function patch(input, opts = {}) {
       onProgress(4, TOTAL, 'Шаг 4/6: Переводы...', 'info');
       let translated = 0;
       let dictPatchedCount = 0;
+      const ruDict = loadRuDictionary();
+      const ruObjStr = buildRuLocaleObjectString(ruDict);
       const localePatchedCount = patchLocaleInJs(assetsDir, push);
 
       for (const fn of allJs) {
@@ -920,25 +1048,9 @@ async function patch(input, opts = {}) {
         // Простой подход: читаем ru-RU.json, парсим, и формируем JS-объект
         // с теми же переменными что и оригинальный словарь.
         const dictRegex = /"zh-CN":\s*([a-zA-Z0-9_$]+)\s*,\s*("en-US":\s*[a-zA-Z0-9_$]+)/g;
+        dictRegex.lastIndex = 0;
         if (dictRegex.test(code)) {
-            let ruDict = {};
-            try {
-              const ruJsonPath = path.join(__dirname, 'ru-RU.json');
-              process.noAsar = false;
-              if (fs.existsSync(ruJsonPath)) {
-                ruDict = JSON.parse(fs.readFileSync(ruJsonPath, 'utf-8'));
-              }
-              process.noAsar = true;
-            } catch(e) { process.noAsar = true; }
-
-            // Формируем JS-объект как строку, экранируя обратные кавычки
-            const ruParts = Object.entries(ruDict).map(([k, v]) => {
-              const ek = k.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-              const ev = String(v).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
-              return '"' + ek + '":`' + ev + '`';
-            });
-            const ruObjStr = '{' + ruParts.join(',') + '}';
-
+            dictRegex.lastIndex = 0;
             code = code.replace(dictRegex, (match, zhVar, enPart) => {
                 if (match.includes('Object.assign')) return match;
                 dictPatchedCount++;
@@ -946,6 +1058,14 @@ async function patch(input, opts = {}) {
                 return `"zh-CN":${ruLocaleObj},"ru-RU":${ruLocaleObj},${enPart}`;
             });
             patched = true;
+        }
+
+        const refreshedDict = refreshPatchedRuLocaleObjects(code, ruObjStr);
+        if (refreshedDict.count > 0) {
+          code = refreshedDict.code;
+          dictPatchedCount += refreshedDict.count;
+          patched = true;
+          push('ok', 'Русский словарь обновлен: ' + fn + ' (' + refreshedDict.count + ')');
         }
 
         const repair = addRuRUAliasForPatchedZhDicts(code);
