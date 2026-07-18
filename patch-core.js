@@ -711,6 +711,93 @@ const HARDCODED_PATCHES = [
   ['`我在这个任务里遇到了问题，请帮忙排查。`', '`Возникла проблема в этой задаче, помогите разобраться.`'],
 
   // ============================================================
+  // v6.3.5 — UI / metadata strings from ZCode 3.2.x screenshots
+  // ============================================================
+
+  // --- Меню профиля / план / настройки ---
+  ['使用统计', 'Статистика использования'],
+  ['升级', 'Обновить план'],
+  ['5M GLM tokens daily', '5 млн GLM-токенов в день'],
+  ['Base usage included', 'Базовая квота включена'],
+  ['5x Lite usage', '5x квоты Lite'],
+  ['20x Lite usage', '20x квоты Lite'],
+  ['Small repo iteration', 'Итерации в небольших репозиториях'],
+  ['Mid-sized repo development', 'Разработка средних репозиториев'],
+  ['Mid-to-large repo work', 'Работа со средними и крупными репозиториями'],
+  ['Latest models over time', 'Новые модели по мере выхода'],
+  ['Priority model access', 'Приоритетный доступ к моделям'],
+  ['Curated MCP tools', 'Подобранные MCP-инструменты'],
+  ['First model access', 'Ранний доступ к моделям'],
+  ['Peak-time priority', 'Приоритет в часы пик'],
+  ['GLM-5.2 · 3M tokens daily', 'GLM-5.2 · 3 млн токенов в день'],
+  ['GLM-5-Turbo · 2M tokens daily', 'GLM-5-Turbo · 2 млн токенов в день'],
+  ['Chrome 硬件加速', 'Аппаратное ускорение Chrome'],
+  ['关闭后可规避部分显卡或驱动导致的白屏、闪退、渲染异常。修改后需重启应用生效。', 'Отключение помогает обойти белый экран, вылеты и ошибки рендера, вызванные некоторыми видеокартами или драйверами. Изменение вступит в силу после перезапуска приложения.'],
+  ['接受提前收到预览版更新', 'Получать предварительные обновления'],
+  ['开启后将最快、提前体验Новые функции和Улучшения版本，关闭后将随着版本发布节奏获得版本推送更新。', 'После включения вы будете раньше получать новые функции и улучшения. Если отключить, обновления будут приходить по обычному графику релизов.'],
+  ['自动下载并安装更新', 'Автоматически скачивать и устанавливать обновления'],
+  ['开启后检测到更新会自动开始下载；下载完成后，如有任务正在运行，重启更新前仍会要求确认。', 'После включения найденные обновления будут скачиваться автоматически. Если после загрузки выполняется задача, перед перезапуском всё равно потребуется подтверждение.'],
+
+  // --- Источники плагинов / фильтры / статусы MCP ---
+  ['从 Плагины Claude Code 安装', 'Установлено из плагинов Claude Code'],
+  ['从 Claude Code 插件安装', 'Установлено из плагинов Claude Code'],
+  ['选择模型', 'Выбрать модель'],
+  ['继承默认值', 'Наследовать значение по умолчанию'],
+  ['继承默认', 'Наследовать значение по умолчанию'],
+  ['已连接', 'Подключён'],
+  ['连接中', 'Подключение'],
+  ['需要授权', 'Требуется авторизация'],
+  ['打开授权', 'Открыть авторизацию'],
+  ['该插件 MCP 服务器正在连接 runtime。', 'MCP-сервер плагина подключается к runtime.'],
+  ['该插件 MCP 服务器已连接并可用。', 'MCP-сервер плагина подключён и доступен.'],
+  ['打开授权后即可完成该插件 MCP 服务器连接。', 'Откройте авторизацию, чтобы завершить подключение MCP-сервера плагина.'],
+  ['Плагин отключён', 'Плагин отключён'],
+  ['Invalid URL', 'Неверный URL'],
+  ['fetch failed', 'Ошибка загрузки'],
+  ['Connection closed', 'Соединение закрыто'],
+  ['connection timed out after 30000ms', 'Время подключения истекло через 30000 мс'],
+
+  // --- Описания встроенных/официальных плагинов ---
+  ['ZCode usage and self-diagnosis guide: teaches agents and users how to configure MCP servers, commands, skills, and plugins.', 'Руководство по использованию и самодиагностике ZCode: помогает агентам и пользователям настраивать MCP-серверы, команды, навыки и плагины.'],
+  ['ZCode usage and self-diagnosis guide: teaches agents and users how to configure MCP servers, commands,', 'Руководство по использованию и самодиагностике ZCode: настройка MCP-серверов, команд,'],
+  ['Upstash Context7 MCP server for up-to-date documentation lookup. Pull version-specific documentation and code examples.', 'MCP-сервер Upstash Context7 для поиска актуальной документации, версий и примеров кода.'],
+  ['Automated code review for pull requests using multiple specialized agents with confidence-based scoring', 'Автоматическое ревью pull request через специализированных агентов с оценкой уверенности.'],
+  ['Browser automation and end-to-end testing MCP server by Microsoft. Enables Claude to interact with web pages.', 'MCP-сервер Microsoft для браузерной автоматизации и end-to-end тестов.'],
+  ['Streamline your git workflow with simple commands for committing, pushing, and creating pull requests', 'Упрощает Git-процесс командами для коммитов, push и создания pull request.'],
+  ['Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques', 'Базовая библиотека навыков Claude Code: TDD, отладка, совместная работа и проверенные техники.'],
+  ['Comprehensive feature development workflow with specialized agents for codebase exploration, architecture, implementation, and validation', 'Комплексный процесс разработки функций со специализированными агентами для изучения кода, архитектуры, реализации и проверки.'],
+
+  // --- Команды плагинов из скриншотов ---
+  ['Start the Android emulator development loop.', 'Запустить цикл разработки с Android-эмулятором.'],
+  ['Check the health and status of Render services.', 'Проверить состояние и работоспособность сервисов Render.'],
+  ['Cleans up all git branches marked as [gone] (branches that have been deleted on the remote but still exist locally), including removing associated worktrees.', 'Очищает локальные Git-ветки, помеченные как [gone], включая связанные worktree.'],
+  ['Code review a pull request', 'Провести ревью pull request'],
+  ['Run CodeRabbit AI code review on your changes', 'Запустить AI-ревью CodeRabbit для ваших изменений'],
+  ['Create a git commit', 'Создать Git-коммит'],
+  ['Commit, push, and open a PR', 'Сделать commit, push и открыть PR'],
+  ['Enable or disable hookify rules interactively', 'Интерактивно включить или отключить правила hookify'],
+  ['Guided end-to-end plugin creation workflow with component design, implementation, and validation', 'Пошаговое создание плагина от проектирования компонентов до реализации и проверки.'],
+  ['Deploy the current project to Render.', 'Развернуть текущий проект в Render.'],
+  ['Guided feature development with codebase understanding and architecture focus', 'Пошаговая разработка функции с изучением кодовой базы и фокусом на архитектуре.'],
+  ['Get help with the hookify plugin', 'Получить помощь по плагину hookify'],
+  ['Set up the Honeycomb MCP server connection for Claude Code', 'Настроить подключение MCP-сервера Honeycomb для Claude Code'],
+  ['Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions', 'Создать hooks, предотвращающие нежелательное поведение по анализу диалогов или явным инструкциям.'],
+  ['List all configured hookify rules', 'Показать все настроенные правила hookify'],
+  ['Full discovery & portfolio analysis of a legacy system — inventory, complexity, debt, relative scale', 'Полный анализ legacy-системы и портфеля: инвентаризация, сложность, техдолг и относительный масштаб.'],
+  ['Generate a phased Modernization Brief — the approved plan that transformation agents will execute against', 'Сформировать поэтапный Modernization Brief — утверждённый план для агентов трансформации.'],
+  ['Mine business logic from legacy code into testable, human-readable rule specifications', 'Извлечь бизнес-логику из legacy-кода в проверяемые и читаемые спецификации правил.'],
+  ['Security vulnerability scan with a reviewable remediation patch — OWASP, CWE, CVE, secrets, injection', 'Сканирование уязвимостей с проверяемым патчем исправлений: OWASP, CWE, CVE, секреты, инъекции.'],
+  ['Dependency & topology mapping — call graphs, data lineage, batch flows, rendered as navigable diagrams', 'Карта зависимостей и топологии: графы вызовов, происхождение данных, batch-потоки и навигационные диаграммы.'],
+  ['Environment readiness check — analysis tools, build toolchain, source completeness, telemetry access', 'Проверка готовности окружения: инструменты анализа, сборочная цепочка, полнота исходников и доступ к телеметрии.'],
+  ['Multi-agent greenfield rebuild — extract specs from legacy, design AI-native, scaffold & validate with HITL', 'Многоагентная пересборка с нуля: извлечь спецификации из legacy, спроектировать AI-native решение, создать каркас и проверить с участием человека.'],
+  ['Where am I in the modernization workflow — artifact inventory, staleness, secrets hygiene, next step', 'Показать текущий этап модернизации: инвентаризация артефактов, устаревание, проверка секретов и следующий шаг.'],
+  ['Transform one legacy module to the target stack — idiomatic rewrite with behavior-equivalence tests', 'Перенести один legacy-модуль на целевой стек: идиоматичная перепись с тестами эквивалентности поведения.'],
+  ['Same-stack version uplift (e.g. .NET Framework 4.8 → .NET 8) — preserve the code, fix the version deltas, prove equivalence by running one test suite on both runtimes', 'Обновление версии в том же стеке (например, .NET Framework 4.8 -> .NET 8): сохранить код, исправить различия версий и доказать эквивалентность одним набором тестов на обеих средах.'],
+  ['Select and restore a legacy ZCode session.', 'Выбрать и восстановить старую сессию ZCode.'],
+  ['Update CLAUDE.md with learnings from this session', 'Обновить CLAUDE.md выводами из этой сессии'],
+  ['Generate a complete Agent Skill from a documentation URL using Firecrawl', 'Создать полноценный Agent Skill по URL документации через Firecrawl'],
+
+  // ============================================================
   // v6.3.4 — Changelog / Release Notes модалка
   // ============================================================
 
@@ -1169,6 +1256,127 @@ function patchTextFile(filePath, replacements, push) {
   return 0;
 }
 
+const PLUGIN_METADATA_REPLACEMENTS = [
+  ['从 Плагины Claude Code 安装', 'Установлено из плагинов Claude Code'],
+  ['从 Claude Code 插件安装', 'Установлено из плагинов Claude Code'],
+  ['选择模型', 'Выбрать модель'],
+  ['继承默认值', 'Наследовать значение по умолчанию'],
+  ['继承默认', 'Наследовать значение по умолчанию'],
+  ['已连接', 'Подключён'],
+  ['连接中', 'Подключение'],
+  ['需要授权', 'Требуется авторизация'],
+  ['打开授权', 'Открыть авторизацию'],
+  ['该插件 MCP 服务器正在连接 runtime。', 'MCP-сервер плагина подключается к runtime.'],
+  ['该插件 MCP 服务器已连接并可用。', 'MCP-сервер плагина подключён и доступен.'],
+  ['打开授权后即可完成该插件 MCP 服务器连接。', 'Откройте авторизацию, чтобы завершить подключение MCP-сервера плагина.'],
+  ['Invalid OAuth error response', 'Некорректный ответ OAuth'],
+  ['Streamable HTTP error', 'Ошибка Streamable HTTP'],
+  ['Invalid URL', 'Неверный URL'],
+  ['fetch failed', 'Ошибка загрузки'],
+  ['MCP error -32000: Connection closed', 'Ошибка MCP -32000: соединение закрыто'],
+  ['Connection closed', 'Соединение закрыто'],
+  ['connection timed out after 30000ms', 'Время подключения истекло через 30000 мс'],
+
+  ['ZCode usage and self-diagnosis guide: teaches agents and users how to configure MCP servers, commands, skills, and plugins.', 'Руководство по использованию и самодиагностике ZCode: помогает агентам и пользователям настраивать MCP-серверы, команды, навыки и плагины.'],
+  ['Upstash Context7 MCP server for up-to-date documentation lookup. Pull version-specific documentation and code examples.', 'MCP-сервер Upstash Context7 для поиска актуальной документации, версий и примеров кода.'],
+  ['Automated code review for pull requests using multiple specialized agents with confidence-based scoring', 'Автоматическое ревью pull request через специализированных агентов с оценкой уверенности.'],
+  ['Browser automation and end-to-end testing MCP server by Microsoft. Enables Claude to interact with web pages.', 'MCP-сервер Microsoft для браузерной автоматизации и end-to-end тестов.'],
+  ['Streamline your git workflow with simple commands for committing, pushing, and creating pull requests', 'Упрощает Git-процесс командами для коммитов, push и создания pull request.'],
+  ['Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques', 'Базовая библиотека навыков Claude Code: TDD, отладка, совместная работа и проверенные техники.'],
+  ['Comprehensive feature development workflow with specialized agents for codebase exploration, architecture, implementation, and validation', 'Комплексный процесс разработки функций со специализированными агентами для изучения кода, архитектуры, реализации и проверки.'],
+  ['Built-in DOCX and PDF document production skills for ZCode.', 'Встроенные навыки ZCode для создания DOCX и PDF.'],
+  ['Provides Android development workflows and emulator automation for ZCode.', 'Добавляет в ZCode рабочие процессы Android-разработки и автоматизацию эмулятора.'],
+  ['Provides iOS development workflows and simulator automation for ZCode.', 'Добавляет в ZCode рабочие процессы iOS-разработки и автоматизацию симулятора.'],
+  ['Select and restore legacy ACP-era ZCode sessions into the new ZCode task and session store.', 'Выбор и восстановление старых сессий ZCode эпохи ACP в новое хранилище задач и сессий ZCode.'],
+  ['Create, edit, and iterate local ZCode skills.', 'Создание, редактирование и доработка локальных навыков ZCode.'],
+
+  ['Start the Android emulator development loop.', 'Запустить цикл разработки с Android-эмулятором.'],
+  ['Check the health and status of Render services.', 'Проверить состояние и работоспособность сервисов Render.'],
+  ['Cleans up all git branches marked as [gone] (branches that have been deleted on the remote but still exist locally), including removing associated worktrees.', 'Очищает локальные Git-ветки, помеченные как [gone], включая связанные worktree.'],
+  ['Code review a pull request', 'Провести ревью pull request'],
+  ['Run CodeRabbit AI code review on your changes', 'Запустить AI-ревью CodeRabbit для ваших изменений'],
+  ['Create a git commit', 'Создать Git-коммит'],
+  ['Commit, push, and open a PR', 'Сделать commit, push и открыть PR'],
+  ['Enable or disable hookify rules interactively', 'Интерактивно включить или отключить правила hookify'],
+  ['Guided end-to-end plugin creation workflow with component design, implementation, and validation', 'Пошаговое создание плагина от проектирования компонентов до реализации и проверки.'],
+  ['Deploy the current project to Render.', 'Развернуть текущий проект в Render.'],
+  ['Guided feature development with codebase understanding and architecture focus', 'Пошаговая разработка функции с изучением кодовой базы и фокусом на архитектуре.'],
+  ['Get help with the hookify plugin', 'Получить помощь по плагину hookify'],
+  ['Set up the Honeycomb MCP server connection for Claude Code', 'Настроить подключение MCP-сервера Honeycomb для Claude Code'],
+  ['Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions', 'Создать hooks, предотвращающие нежелательное поведение по анализу диалогов или явным инструкциям.'],
+  ['List all configured hookify rules', 'Показать все настроенные правила hookify'],
+  ['Full discovery & portfolio analysis of a legacy system — inventory, complexity, debt, relative scale', 'Полный анализ legacy-системы и портфеля: инвентаризация, сложность, техдолг и относительный масштаб.'],
+  ['Generate a phased Modernization Brief — the approved plan that transformation agents will execute against', 'Сформировать поэтапный Modernization Brief — утверждённый план для агентов трансформации.'],
+  ['Mine business logic from legacy code into testable, human-readable rule specifications', 'Извлечь бизнес-логику из legacy-кода в проверяемые и читаемые спецификации правил.'],
+  ['Security vulnerability scan with a reviewable remediation patch — OWASP, CWE, CVE, secrets, injection', 'Сканирование уязвимостей с проверяемым патчем исправлений: OWASP, CWE, CVE, секреты, инъекции.'],
+  ['Dependency & topology mapping — call graphs, data lineage, batch flows, rendered as navigable diagrams', 'Карта зависимостей и топологии: графы вызовов, происхождение данных, batch-потоки и навигационные диаграммы.'],
+  ['Environment readiness check — analysis tools, build toolchain, source completeness, telemetry access', 'Проверка готовности окружения: инструменты анализа, сборочная цепочка, полнота исходников и доступ к телеметрии.'],
+  ['Multi-agent greenfield rebuild — extract specs from legacy, design AI-native, scaffold & validate with HITL', 'Многоагентная пересборка с нуля: извлечь спецификации из legacy, спроектировать AI-native решение, создать каркас и проверить с участием человека.'],
+  ['Where am I in the modernization workflow — artifact inventory, staleness, secrets hygiene, next step', 'Показать текущий этап модернизации: инвентаризация артефактов, устаревание, проверка секретов и следующий шаг.'],
+  ['Transform one legacy module to the target stack — idiomatic rewrite with behavior-equivalence tests', 'Перенести один legacy-модуль на целевой стек: идиоматичная перепись с тестами эквивалентности поведения.'],
+  ['Same-stack version uplift (e.g. .NET Framework 4.8 → .NET 8) — preserve the code, fix the version deltas, prove equivalence by running one test suite on both runtimes', 'Обновление версии в том же стеке (например, .NET Framework 4.8 -> .NET 8): сохранить код, исправить различия версий и доказать эквивалентность одним набором тестов на обеих средах.'],
+  ['Select and restore a legacy ZCode session.', 'Выбрать и восстановить старую сессию ZCode.'],
+  ['Update CLAUDE.md with learnings from this session', 'Обновить CLAUDE.md выводами из этой сессии'],
+  ['Generate a complete Agent Skill from a documentation URL using Firecrawl', 'Создать полноценный Agent Skill по URL документации через Firecrawl'],
+
+  ['Designs feature architectures by analyzing existing codebase patterns and conventions, then providing comprehensive implementation blueprints with specific files to create/modify, component designs, data flows, and build sequences', 'Проектирует архитектуру функций на основе существующих паттернов кодовой базы и готовит подробные планы реализации: файлы, компоненты, потоки данных и последовательность сборки.'],
+  ['Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, understanding patterns and abstractions, and documenting dependencies to inform new development', 'Глубоко анализирует функции кодовой базы: трассирует пути выполнения, слои архитектуры, паттерны, абстракции и зависимости для дальнейшей разработки.'],
+  ['Reviews proposed target architectures and transformed code against modern best practice. Adversarial — looks for over-engineering, missed requirements, and simpler alternatives.', 'Проверяет целевую архитектуру и преобразованный код на соответствие современным практикам; ищет переусложнение, пропущенные требования и более простые варианты.'],
+  ['Mines domain logic, calculations, validations, and policies from legacy code into testable Given/When/Then specifications.', 'Извлекает доменную логику, расчёты, проверки и политики из legacy-кода в тестируемые спецификации Given/When/Then.'],
+  ['Scaffolds one service of a reimagined system from the approved architecture and spec — project skeleton, domain model, API stubs, executable acceptance tests.', 'Создаёт каркас сервиса для переосмысленной системы по утверждённой архитектуре и спецификации: структура проекта, доменная модель, API-заглушки и исполняемые acceptance-тесты.'],
+  ['Adversarial security reviewer — OWASP Top 10, CWE, dependency CVEs, secrets, injection. Use for security debt scanning and pre-modernization hardening.', 'Строгий security-reviewer: OWASP Top 10, CWE, CVE зависимостей, секреты и инъекции. Используйте для поиска security debt и укрепления перед модернизацией.'],
+  ['Writes characterization, contract, and equivalence tests that pin down legacy behavior so transformation can be proven correct. Use before any rewrite.', 'Пишет characterization, contract и equivalence-тесты, фиксирующие legacy-поведение перед переписыванием.'],
+  ['Identifies the breaking changes between two versions of the SAME stack', 'Определяет breaking changes между двумя версиями одного стека'],
+  ['Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality.', 'Упрощает и доводит код для ясности, согласованности и поддерживаемости без изменения поведения.'],
+  ['Specialized CodeRabbit code review agent that performs thorough analysis of code changes', 'Специализированный агент CodeRabbit для глубокого анализа изменений кода.'],
+  ['Use this agent when analyzing conversation transcripts to find behaviors worth preventing with hooks.', 'Используйте этого агента для анализа диалогов и поиска поведения, которое стоит предотвращать hooks.'],
+  ['Render deployment specialist that helps with render.yaml authoring, service configuration, debugging, and monitoring.', 'Специалист по деплою в Render: render.yaml, конфигурация сервисов, отладка и мониторинг.'],
+  ["Uses Zapier MCP to discover, enable, audit, and execute app actions safely and efficiently while following Zapier's read/write confirmation lifecycle.", 'Использует Zapier MCP для поиска, включения, аудита и безопасного выполнения действий приложений с соблюдением цикла подтверждений Zapier.'],
+  ['Universal research agent for investigating complex questions, searching for code, and executing multi-step tasks.', 'Универсальный агент для исследования сложных вопросов, поиска по коду и выполнения многошаговых задач.'],
+  ['Read-only search agent for broad fan-out searches.', 'Агент поиска только для чтения, предназначенный для широких параллельных исследований.']
+];
+
+function patchMetadataTextFile(filePath, push) {
+  return patchTextFile(filePath, PLUGIN_METADATA_REPLACEMENTS, push);
+}
+
+function walkMetadataFiles(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  let entries = [];
+  try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return out; }
+  for (const entry of entries) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walkMetadataFiles(full, out);
+      continue;
+    }
+    if (!entry.isFile()) continue;
+    if (/\.(md|json|ya?ml|toml)$/i.test(entry.name)) out.push(full);
+  }
+  return out;
+}
+
+function patchPluginCacheMetadata(root, push) {
+  const home = os.homedir();
+  const roots = [
+    path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
+    path.join(home, '.codex', 'plugins', 'cache'),
+    path.join(root, 'resources', 'glm', 'packages')
+  ];
+  let patched = 0;
+  const seen = new Set();
+  for (const dir of roots) {
+    for (const filePath of walkMetadataFiles(dir)) {
+      const key = path.normalize(filePath).toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      patched += patchMetadataTextFile(filePath, push);
+    }
+  }
+  push(patched > 0 ? 'ok' : 'warn', 'Метаданных плагинов/команд/агентов переведено: ' + patched);
+  return patched;
+}
+
 function patchGlmPackageMetadata(root, push) {
   const glmDir = path.join(root, 'resources', 'glm', 'packages');
   if (!fs.existsSync(glmDir)) {
@@ -1566,8 +1774,9 @@ async function patch(input, opts = {}) {
       push(dictPatchedCount > 0 ? 'ok' : 'warn', 'Словарей пропатчено: ' + dictPatchedCount);
       const pluginPatchedCount = patchGlmPackageMetadata(info.root, push);
       const skillPatchedCount = patchSkillMetadata(info.root, push);
+      const pluginCachePatchedCount = patchPluginCacheMetadata(info.root, push);
 
-      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0) {
+      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0) {
         throw new Error('Ни одна замена не сработала — версия ZCode не поддерживается этим патчем');
       }
 

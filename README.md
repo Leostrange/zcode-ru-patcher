@@ -11,8 +11,8 @@
   </p>
 
   <p>
-    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.4">
-      <img alt="Release" src="https://img.shields.io/badge/release-v6.3.4-2563eb?style=for-the-badge">
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.5">
+      <img alt="Release" src="https://img.shields.io/badge/release-v6.3.5-2563eb?style=for-the-badge">
     </a>
     <img alt="Platform" src="https://img.shields.io/badge/platform-Windows-0078d4?style=for-the-badge">
     <img alt="Electron" src="https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=electron&logoColor=white">
@@ -20,7 +20,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.4"><b>Скачать патч</b></a>
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.5"><b>Скачать патч</b></a>
     ·
     <a href="assets/Russian_UI_ZCode.mp4">Смотреть полное MP4-демо</a>
     ·
@@ -48,18 +48,19 @@ ZCode RU Patcher - это компактный Windows-патчер для ру�
 
 1. Установите [ZCode](https://zcode.z.ai/cn) с официального сайта.
 2. Если требуется обновить IDE - обновите её перед установкой патча.
-3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.4), запустите его и пропатчите ZCode.
+3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.5), запустите его и пропатчите ZCode.
 4. Дождитесь завершения процесса. Не запускайте ZCode и не мешайте патчеру, пока установка не закончится.
 
 После каждого обновления ZCode патч придётся установить заново.
 
-## Что нового в v6.3.4
+## Что нового в v6.3.5
 
-- Обновлена версия окна русификатора, Electron-пакета и релизного файла до `v6.3.4`.
-- Переведены элементы Plan Mode: кнопка `Approve`, описание выхода из режима плана и китайские варианты карточки разрешения.
-- Переведены режимы доступа для Claude, Codex, Gemini, OpenCode и GLM.
-- Переведены элементы уточняющих вопросов, панели плана, вкладки плана, исходных данных и ошибок переключения режима.
-- Обновлены внешняя и внутренняя копии `patch-core.js`.
+- Переведены оставшиеся строки раздела **Команды**, включая команды плагинов `/modernize-*`, `/restore-legacy-sessions`, `/revise-claude-md`, `/skill-gen`, `/commit`, `/code-review`, `/deploy-to-render`, `/hookify`, `/honeycomb-setup`.
+- Переведены недостающие строки меню профиля, Coding Plan, тарифных преимуществ и настроек ZCode.
+- Переведены статусы и подсказки MCP-серверов плагинов, включая подключение, авторизацию и ошибки URL/загрузки/соединения.
+- Добавлен отдельный проход по кешу `.zcode\cli\plugins\cache`.
+- Расширены переводы метаданных встроенных и Claude Code плагинов.
+- Патчер пересобран как `ZCode-Ru-Patcher-v6.3.5.exe`.
 
 Полный changelog: [CHANGELOG.md](CHANGELOG.md).
 
@@ -97,16 +98,16 @@ ZCode RU Patcher - это компактный Windows-патчер для ру�
 Готовый патч находится в разделе Releases:
 
 ```text
-ZCode-Ru-Patcher-v6.3.4.exe
+ZCode-Ru-Patcher-v6.3.5.exe
 ```
 
 SHA256:
 
 ```text
-820D57EE142164ACA6DE041742D0F3B773CD508EE947035DB85DEC2AE8F4857C
+648629746E02606F9B51021508061FDB57C75DDCD8AE804DA7B7D5CFAFD410A7
 ```
 
-Ссылка: https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.4
+Ссылка: https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.5
 
 ## Технологии
 
