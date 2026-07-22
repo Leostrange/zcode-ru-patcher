@@ -1105,19 +1105,159 @@ function patchRuntimeReasoningLanguage(tempExtract, push) {
   return patchedFiles;
 }
 
+// Ключи, добавленные в ZCode 3.4.x после первоначального русского словаря.
+const LATEST_UI_RU = {
+  'updateReady.shortTitle': 'Обновление',
+  'updateReady.title': 'Обновление v{version}',
+  'updateReady.tooltip': 'v{version} готова. Нажмите, чтобы перезапустить и обновить.',
+  'updateAvailable.tooltip': 'Найдена новая версия v{version}. Нажмите, чтобы посмотреть.',
+  'updateReady.confirm.title': 'Обновить до v{version}?',
+  'updateReady.confirm.description': 'Приложение будет закрыто и перезапущено. Выполняющиеся задачи прервутся.',
+  'updateReady.confirm.ok': 'Перезапустить и обновить',
+  'updateReady.confirm.cancel': 'Позже',
+  'update.toast.upToDate': 'Установлена последняя версия v{version}',
+  'update.toast.available': 'Найдена новая версия v{version}',
+  'update.toast.downloading': 'Загрузка новой версии v{version}',
+  'updateDialog.availableTitle': 'Найдена новая версия v{version}',
+  'updateDialog.downloadingTitle': 'Загрузка v{version}',
+  'updateDialog.readyTitle': 'v{version} готова к обновлению',
+  'updateDialog.releaseNotesExpand': 'Показать',
+  'updateDialog.releaseNotesCollapse': 'Скрыть',
+  'updateDialog.downloadAndUpdate': 'Скачать обновление',
+  'updateDialog.cancelDownload': 'Отменить загрузку',
+  'updateDialog.autoDownloadAndInstall': 'Автоматически скачивать и устанавливать обновления',
+  'updateDialog.downloadingAction': 'Загрузка',
+  'updateDialog.downloadProgress': 'Прогресс загрузки',
+  'updateDialog.restartToUpdate': 'Перезапустить и обновить',
+  'updateDialog.skipVersion': 'Пропустить эту версию',
+  'updateDialog.later': 'Позже',
+
+  'workspaceSidebar.workspaces': 'Задачи',
+  'workspaceSidebar.archivedTasks': 'Архив задач',
+  'workspaceSidebar.taskViewOptions': 'Фильтр и сортировка',
+  'workspaceSidebar.organize': 'Вид',
+  'workspaceSidebar.organizeGrouped': 'По группам',
+  'workspaceSidebar.organizeByProject': 'По проектам',
+  'workspaceSidebar.conversationsSection': 'Задачи',
+  'workspaceSidebar.projectsSection': 'Проекты',
+  'workspaceSidebar.newConversation': 'Новая задача',
+  'workspaceSidebar.reorderSection': 'Переместить раздел {section}',
+  'workspaceSidebar.addProject': 'Добавить проект',
+  'workspaceSidebar.noConversations': 'Задач пока нет',
+  'workspaceSidebar.noProjects': 'Проекты пока не открыты',
+  'workspaceSidebar.viewByWorkspace': 'По проектам',
+  'workspaceSidebar.organizeChronologicalList': 'По времени',
+  'workspaceSidebar.sortBy': 'Сортировка',
+  'workspaceSidebar.sortByCreated': 'По дате создания',
+  'workspaceSidebar.sortByUpdated': 'По дате обновления',
+  'workspaceSidebar.expandAllGroups': 'Развернуть все группы',
+  'workspaceSidebar.collapseAllGroups': 'Свернуть все группы',
+  'workspaceSidebar.searchTasks': 'Поиск задач',
+  'workspaceSidebar.searchTasksPlaceholder': 'Поиск задач...',
+  'workspaceSidebar.searchArchivedTasksPlaceholder': 'Поиск в архиве...',
+  'workspaceSidebar.closeTaskSearch': 'Закрыть поиск задач',
+  'workspaceSidebar.remove': 'Удалить',
+  'workspaceSidebar.reconnect': 'Переподключиться',
+  'workspaceSidebar.notConnected': 'Не подключено',
+  'workspaceSidebar.empty': 'Рабочие пространства пока не открыты.',
+  'workspaceSidebar.unavailableLocalDirectory': 'Папка рабочего пространства недоступна. Восстановите её и перезапустите ZCode.',
+  'workspaceSidebar.showSidebar': 'Показать боковую панель',
+  'workspaceSidebar.hideSidebar': 'Скрыть боковую панель',
+  'workspaceSidebar.toggleSidebar': 'Переключить боковую панель',
+  'workspaceSidebar.resizeSidebar': 'Изменить ширину боковой панели',
+  'workspaceSidebar.toggleArchivedTasks': 'Архив',
+  'workspaceSidebar.showFileTree': 'Показать файлы',
+  'workspaceSidebar.sshConnectionTitle': 'SSH-подключение',
+
+  'taskList.newTask': 'Новая задача',
+  'taskList.cronTaskLabel': 'Запланированная задача',
+  'taskList.newThread': 'Новая задача',
+  'taskList.forkedUntitled': 'Новая задача',
+  'taskList.selectProvider': 'Выбрать агента',
+  'taskList.noTasks': 'Задач пока нет',
+  'taskList.noArchivedTasks': 'В архиве нет задач',
+  'taskList.loading': 'Загрузка задач...',
+  'taskList.syncingRemoteWorkspaces': 'Загрузка удалённых задач...',
+  'taskList.showMore': 'Показать больше',
+  'taskList.showLess': 'Показать меньше',
+  'taskList.pinnedSection': 'Закреплённые',
+  'taskList.recentSection': 'Недавние задачи',
+  'taskList.delete': 'Удалить',
+  'taskList.pin': 'Закрепить задачу',
+  'taskList.unpin': 'Открепить задачу',
+  'taskList.rename': 'Переименовать задачу',
+  'taskList.archive': 'Архивировать задачу',
+  'taskList.unarchive': 'Восстановить из архива',
+  'taskList.renamePlaceholder': 'Название задачи',
+  'taskList.markAsUnread': 'Отметить непрочитанной',
+  'taskList.openInSplitPane': 'Открыть рядом',
+  'taskList.feedback': 'Отправить отзыв',
+  'taskList.resume': 'Продолжить',
+  'taskList.untitled': 'Новая задача',
+  'taskList.minutesAgo': '{minutes} мин. назад',
+  'taskList.daysAgo': '{days} дн. назад',
+  'taskList.status.streaming': 'Выполняется',
+  'taskList.status.restoring': 'Восстановление',
+  'taskList.status.ready': 'Готово',
+  'taskList.status.completed': 'Завершено',
+  'taskList.status.failed': 'Ошибка',
+  'taskList.status.notReady': 'Не готово',
+  'taskList.openSettings': 'Настройки',
+  'taskList.permissionTag': 'Ожидает подтверждения',
+  'taskList.userInputTag': 'Ожидает подтверждения',
+  'taskList.stopCountdown': 'Остановить таймер',
+
+  'settings.hooks.title': 'Хуки',
+  'settings.hooks.description': 'Управление хуками жизненного цикла задач. Они автоматически выполняются при указанных событиях.',
+  'settings.hooks.enabled': 'Включено',
+  'settings.hooks.disabled': 'Выключено',
+  'settings.hooks.add': 'Новый хук',
+  'settings.hooks.edit': 'Изменить хук',
+  'settings.hooks.delete': 'Удалить хук',
+  'settings.hooks.deleteDescription': 'Удалить хук {event}?',
+  'settings.hooks.empty': 'Хуки не настроены',
+  'settings.hooks.sessionSnapshot': 'Изменения конфигурации хуков вступят в силу в новом сеансе.',
+  'settings.hooks.group.configured': 'Настроенные хуки',
+  'settings.hooks.group.compatibility': 'Доступные для импорта хуки',
+  'settings.hooks.group.plugins': 'Хуки плагинов',
+  'settings.hooks.import': 'Импортировать',
+  'settings.hooks.imported': 'Хук импортирован',
+  'settings.hooks.event': 'Событие',
+  'settings.hooks.type': 'Способ запуска',
+  'settings.hooks.type.process': 'Процесс',
+  'settings.hooks.matcher': 'Фильтр',
+  'settings.hooks.timeout': 'Тайм-аут (сек.)',
+  'settings.hooks.searchPlaceholder': 'Поиск хуков...',
+  'settings.hooks.backToList': 'К списку хуков',
+  'settings.hooks.matcherPlaceholder': 'Например: Write, Edit, Bash',
+  'settings.hooks.matcherHint': 'Оставьте пустым, чтобы сопоставлять все входные данные этого события.',
+  'settings.hooks.commandPlaceholder': "Например: echo 'Привет из хука'",
+  'settings.hooks.args': 'Аргументы',
+  'settings.hooks.argsPlaceholder': 'По одному аргументу argv в строке',
+  'settings.hooks.argsHint': 'По одному аргументу argv в строке.',
+  'settings.hooks.shellPlaceholder': 'Системная оболочка по умолчанию',
+  'settings.hooks.async': 'Выполнять в фоне',
+  'settings.hooks.statusMessage': 'Сообщение о состоянии',
+  'settings.hooks.statusMessagePlaceholder': 'Например: Проверка рабочего пространства',
+  'settings.hooks.timeoutHint': 'Тайм-аут в секундах.',
+  'settings.hooks.customJson': 'Дополнительные поля JSON',
+  'settings.hooks.customJsonObjectError': 'Дополнительные поля должны быть JSON-объектом.',
+  'settings.hooks.customJsonParseError': 'Не удалось разобрать дополнительные поля JSON.'
+};
+
 function loadRuDictionary() {
   try {
     const ruJsonPath = path.join(__dirname, 'ru-RU.json');
     process.noAsar = false;
     if (fs.existsSync(ruJsonPath)) {
-      return JSON.parse(fs.readFileSync(ruJsonPath, 'utf-8'));
+      return Object.assign({}, JSON.parse(fs.readFileSync(ruJsonPath, 'utf-8')), LATEST_UI_RU);
     }
   } catch {
-    return {};
+    return Object.assign({}, LATEST_UI_RU);
   } finally {
     process.noAsar = true;
   }
-  return {};
+  return Object.assign({}, LATEST_UI_RU);
 }
 
 function buildRuLocaleObjectString(ruDict) {
@@ -1561,6 +1701,8 @@ const SKILL_DESCRIPTION_RU = {
   'using-git-worktrees': 'Создание изолированного workspace через native tools или git worktree перед выполнением планов.',
   'using-superpowers': 'Начало разговора с проверкой доступных skills и обязательным выбором подходящего навыка перед ответом.',
   'verification-before-completion': 'Проверка перед заявлением о готовности: запустить команды и подтвердить вывод до success-утверждений.',
+  'workctl': 'Управление возможностями платформы Work Agent: обнаружение команд через `workctl schema` и выполнение операций со структурированным выводом.',
+  'workctl-operator': 'Установка, обновление, авторизация и использование Work Agent CLI (`workctl`): работа с инструментами Alibaba.com, настройка, диагностика token/cache/schema/runtime и асинхронных задач.',
   'writing-plans': 'Создание плана при наличии spec или требований перед изменением кода.',
   'writing-skills': 'Создание, редактирование и проверка skills перед развертыванием.'
 };
