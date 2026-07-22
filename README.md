@@ -11,8 +11,8 @@
   </p>
 
   <p>
-    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6">
-      <img alt="Release" src="https://img.shields.io/badge/release-v6.3.6-2563eb?style=for-the-badge">
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.7">
+      <img alt="Release" src="https://img.shields.io/badge/release-v6.3.7-2563eb?style=for-the-badge">
     </a>
     <img alt="Platform" src="https://img.shields.io/badge/platform-Windows-0078d4?style=for-the-badge">
     <img alt="Electron" src="https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=electron&logoColor=white">
@@ -20,7 +20,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6"><b>Скачать патч</b></a>
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.7"><b>Скачать патч</b></a>
     ·
     <a href="assets/Russian_UI_ZCode.mp4">Смотреть полное MP4-демо</a>
     ·
@@ -48,12 +48,16 @@ ZCode RU Patcher - это компактный Windows-патчер для ру�
 
 1. Установите [ZCode](https://zcode.z.ai/cn) с официального сайта.
 2. Если требуется обновить IDE - обновите её перед установкой патча.
-3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6), запустите его и пропатчите ZCode.
+3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.7), запустите его и пропатчите ZCode.
 4. Дождитесь завершения процесса. Не запускайте ZCode и не мешайте патчеру, пока установка не закончится.
 
 После каждого обновления ZCode патч придётся установить заново.
 
-## Что нового в v6.3.6
+## Что нового в v6.3.7
+
+- Исправлена версия внутри окна патчера: теперь отображается `v6.3.7`.
+- Переведены недостающие строки боковой панели, планировщика задач, хуков и диалогов обновления.
+- Добавлены замены для китайских описаний и статусов плагинов, навыков, субагентов и MCP.
 
 - Исправлен перевод подписи вставленного большого текста, который ZCode показывает как файл-вложение.
 - Переведены runtime-подписи разделов «Навыки», «Субагенты», «Серверы MCP», «Плагины» и «Команды».
@@ -64,7 +68,7 @@ ZCode RU Patcher - это компактный Windows-патчер для ру�
 - Переведены статусы и подсказки MCP-серверов плагинов, включая подключение, авторизацию и ошибки URL/загрузки/соединения.
 - Добавлен отдельный проход по кешу `.zcode\cli\plugins\cache`.
 - Расширены переводы метаданных встроенных и Claude Code плагинов.
-- Патчер пересобран как `ZCode-Ru-Patcher-v6.3.5.exe`.
+- Патчер пересобран как `ZCode-Ru-Patcher-v6.3.7.exe`.
 
 Полный changelog: [CHANGELOG.md](CHANGELOG.md).
 
