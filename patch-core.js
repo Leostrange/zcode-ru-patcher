@@ -1858,41 +1858,6 @@ function walkSkillFiles(dir, out = []) {
   return out;
 }
 
-function patchPluginManifestDescriptions(root, push) {
-  const home = os.homedir();
-  const roots = [
-    path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
-    path.join(home, '.codex', 'plugins', 'cache'),
-    path.join(root, 'resources', 'glm', 'packages')
-  ];
-  let patched = 0;
-  for (const dir of roots) {
-    for (const filePath of walkMetadataFiles(dir)) {
-      if (!/(^|\\)(?:plugin|package)\.json$/i.test(filePath)) continue;
-      let text;
-      let data;
-      try { text = fs.readFileSync(filePath, 'utf-8'); data = JSON.parse(text); } catch { continue; }
-      let changed = false;
-      const id = String(data.name || data.id || path.basename(path.dirname(filePath)));
-      if (hasUntranslatedDescription(data.description)) {
-        data.description = genericSkillDescription(id, filePath);
-        changed = true;
-      }
-      if (hasUntranslatedDescription(data.displayDescription)) {
-        data.displayDescription = genericSkillDescription(id, filePath);
-        changed = true;
-      }
-      if (changed) {
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\\n', 'utf-8');
-        patched++;
-        push('ok', 'Описание плагина переведено: ' + id);
-      }
-    }
-  }
-  push(patched > 0 ? 'ok' : 'warn', 'Описаний плагинов переведено: ' + patched);
-  return patched;
-}
-
 function patchSkillMetadata(root, push) {
   const home = os.homedir();
   const candidateRootsForSkills = [
@@ -2116,9 +2081,8 @@ async function patch(input, opts = {}) {
       const pluginPatchedCount = patchGlmPackageMetadata(info.root, push);
       const skillPatchedCount = patchSkillMetadata(info.root, push);
       const pluginCachePatchedCount = patchPluginCacheMetadata(info.root, push);
-      const pluginManifestPatchedCount = patchPluginManifestDescriptions(info.root, push);
 
-      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0 && pluginManifestPatchedCount === 0) {
+      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0) {
         throw new Error('Ни одна замена не сработала — версия ZCode не поддерживается этим патчем');
       }
 
