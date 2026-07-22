@@ -1,5 +1,17 @@
 # Changelog — ZCode-Ru-Patcher
 
+## ZCode-Ru-Patcher v6.3.9
+
+### Исправлено
+- Исправлена упаковка внутреннего `resources/app.asar`.
+- В архив возвращён `node_modules/@electron/asar` и его зависимости.
+- Устранена ошибка запуска `Cannot find module '@electron/asar'`.
+
+### Проверка
+- Проверено наличие `patch-core.js` и `node_modules/@electron/asar/package.json` внутри итогового `app.asar`.
+
+---
+
 ## ZCode-Ru-Patcher v6.3.8
 
 ### Исправлено
