@@ -1242,7 +1242,86 @@ const LATEST_UI_RU = {
   'settings.hooks.timeoutHint': 'Тайм-аут в секундах.',
   'settings.hooks.customJson': 'Дополнительные поля JSON',
   'settings.hooks.customJsonObjectError': 'Дополнительные поля должны быть JSON-объектом.',
-  'settings.hooks.customJsonParseError': 'Не удалось разобрать дополнительные поля JSON.'
+  'settings.hooks.customJsonParseError': 'Не удалось разобрать дополнительные поля JSON.',
+
+  'settings.plugins.store.subtitle': 'Расширяйте ZCode плагинами: навыки, команды и возможности MCP.',
+  'settings.plugins.store.searchPlaceholder': 'Поиск плагинов',
+  'settings.plugins.store.searchResults': 'Результаты поиска ({count})',
+  'settings.plugins.store.searchEmpty': 'Подходящие плагины не найдены',
+  'settings.plugins.store.installedStrip': 'Установленные',
+  'settings.plugins.store.manageInstalled': 'Управление установленными',
+  'settings.plugins.store.segment.public': 'Общие',
+  'settings.plugins.store.segment.personal': 'Личные',
+  'settings.plugins.store.category.developerTools': 'Инструменты разработчика',
+  'settings.plugins.store.category.productivity': 'Продуктивность',
+  'settings.plugins.store.category.utilities': 'Полезные инструменты',
+  'settings.plugins.store.category.guides': 'Руководства',
+  'settings.plugins.store.category.template': 'Шаблоны',
+  'settings.plugins.store.category.other': 'Другое',
+  'settings.plugins.store.install': 'Установить',
+  'settings.plugins.store.create': 'Создать',
+  'settings.plugins.store.back': 'Назад',
+  'settings.plugins.store.menu.label': 'Дополнительные действия',
+  'settings.plugins.store.menu.enable': 'Включить',
+  'settings.plugins.store.menu.disable': 'Отключить',
+  'settings.plugins.store.sourceMissing': 'Источник каталога недоступен. Плагин продолжит работать, но пока не сможет обновляться.',
+  'settings.plugins.store.sources.title': 'Источники каталога',
+  'settings.plugins.store.sources.empty': 'Источники каталога пока не добавлены',
+  'settings.plugins.store.sources.pluginCount': 'Плагинов: {count}',
+  'settings.plugins.store.sources.lastUpdated': 'Обновлено: {time}',
+  'settings.plugins.store.sources.update': 'Обновить каталог',
+  'settings.plugins.store.sources.remove': 'Удалить каталог',
+  'settings.plugins.store.info.title': 'Сведения',
+  'settings.plugins.store.info.developer': 'Разработчик',
+  'settings.plugins.store.info.category': 'Категория',
+  'settings.plugins.store.info.website': 'Сайт',
+  'settings.plugins.store.info.privacyPolicy': 'Политика конфиденциальности',
+  'settings.plugins.store.info.termsOfService': 'Условия использования',
+  'settings.plugins.store.personalEmpty': 'В личных источниках пока нет плагинов. Добавьте источник через кнопку «Создать».',
+
+  'settings.skills.description': 'Управление навыками уровня проекта и пользователя. В чате навык вызывается через $имя-навыка.',
+  'settings.skills.searchPlaceholder': 'Поиск навыков...',
+  'settings.skills.refresh': 'Обновить',
+  'settings.skills.refreshing': 'Обновление...',
+  'settings.skills.empty': 'Нет доступных навыков',
+  'settings.skills.noDescription': 'Описание отсутствует',
+  'settings.skills.filter.enabled.label': 'Статус включения',
+  'settings.skills.agent.common': 'Общие',
+  'settings.skills.copyToCommon': 'Скопировать в общую папку',
+  'settings.skills.removeFromCommon': 'Удалить из общей папки',
+  'settings.skills.agent.unknown': 'Неизвестный источник',
+  'settings.skills.create.open': 'Создать навык',
+  'settings.skills.import.open': 'Импортировать навыки внешнего агента',
+  'settings.skills.import.title': 'Импорт навыков внешнего агента',
+  'settings.skills.import.description': 'Ищет навыки Claude Code, Codex CLI и OpenCode; импортируются только отсутствующие элементы без перезаписи существующих.',
+  'settings.skills.detail.description': 'Описание',
+  'settings.skills.detail.path': 'Путь к файлу',
+  'settings.skills.detail.openPath': 'Открыть',
+  'settings.skills.detail.scope': 'Область',
+  'settings.skills.detail.status': 'Статус',
+  'settings.skills.detail.enabled': 'Включён',
+  'settings.skills.detail.disabled': 'Отключён',
+  'settings.skills.scope.personal': 'Личный',
+  'settings.skills.scope.workspaceFallback': 'Проект',
+
+  'chat.empty.workspaceMenu': 'Выбрать проект',
+  'chat.empty.selectProject': 'Выбрать проект',
+  'chat.placeholder.newTask': 'Спросите ZCode что угодно. @ — файлы, / — команды, $ — навыки, # — связанные беседы.',
+  'chat.placeholder.newTaskMobile': 'Спросите ZCode что угодно...',
+  'chat.toolbar.permissionMode.ask': 'Спрашивать перед правками',
+  'chat.toolbar.permissionMode.label': 'Режим разрешений',
+  'chat.reasoning.thinking': 'Размышляет...',
+  'chat.reasoning.thought': 'Ход рассуждений',
+  'chat.history.workingFor': 'Выполняется {duration}',
+  'chat.history.workedFor': 'Выполнялось {duration}',
+  'chat.summaryPanel.runningBackgroundTasks': 'Фоновые задачи',
+  'chat.statusPanel.runningStatusValue': 'Выполняется: {count}',
+  'chat.statusPanel.runningStatusValuePlural': 'Выполняется: {count}',
+  'chat.statusPanel.todo': 'Прогресс',
+  'chat.statusPanel.todoCompletedExpanded': 'Скрыть завершённые: {count}',
+  'chat.statusPanel.todoCompletedFold': 'Завершено: {count}',
+  'chat.statusPanel.todoWaitingExpanded': 'Скрыть ожидающие: {count}',
+  'chat.statusPanel.todoWaitingFold': 'Ожидают: {count}'
 };
 
 function loadRuDictionary() {
@@ -1711,12 +1790,50 @@ function yamlQuote(value) {
   return '"' + String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 }
 
+function hasUntranslatedDescription(value) {
+  const text = String(value || '').trim();
+  return /[\u4e00-\u9fff]/.test(text) || (!/[А-Яа-яЁё]/.test(text) && /[A-Za-z]{4,}/.test(text));
+}
+
+function genericSkillDescription(skillName, filePath) {
+  const name = String(skillName || 'навык');
+  const normalized = name.toLowerCase();
+  const families = [
+    [/^render-/, 'Инструмент Render для развёртывания, настройки и сопровождения приложений и сервисов.'],
+    [/^figma-/, 'Инструмент Figma для проектирования интерфейсов, работы с макетами и передачи дизайна в разработку.'],
+    [/^expo-/, 'Инструмент Expo для разработки, сборки, проверки и публикации мобильных приложений.'],
+    [/^(huggingface|hf-)/, 'Инструмент Hugging Face для работы с моделями, наборами данных, обучением и публикацией результатов.'],
+    [/^(nvidia|omni|dynamo|cuopt|physical-ai)/, 'Инструмент экосистемы NVIDIA для ИИ, GPU-вычислений, моделирования и развёртывания.'],
+    [/^(brightdata|brd-|brand-|data-feeds|live-research|discover-api|scrape|search|seo-audit|price-comparison)/, 'Инструмент Bright Data для веб-поиска, извлечения данных и исследований.'],
+    [/^(firecrawl|firecrawl-)/, 'Инструмент Firecrawl для поиска, обхода и извлечения данных из веб-страниц.'],
+    [/^(duckdb|attach-db|convert-file|query|read-file|read-memories|s3-explore|spatial)/, 'Инструмент DuckDB для чтения, преобразования, поиска и анализа данных.'],
+    [/^(qt-|qtcpp|qtqml)/, 'Инструмент для разработки, проверки и сопровождения проектов Qt, C++ и QML.'],
+    [/^(atomic|create-atomic|framework|new-app)/, 'Инструмент Atomic Agents для проектирования, создания и проверки агентных компонентов.'],
+    [/^(honeycomb|otel-|metrics-|observability|production-investigation|query-patterns|verify-recent-trace)/, 'Инструмент Honeycomb для наблюдаемости, трассировки и анализа работы приложений.'],
+    [/^(fastly|falco|fastlike|vcl|vicero)/, 'Инструмент Fastly для настройки, проверки и сопровождения сервисов CDN и Compute.'],
+    [/^(plugin-|command-|agent-|hook-|mcp-)/, 'Инструмент для создания, настройки и диагностики плагинов, команд, агентов, хуков и MCP-серверов.'],
+    [/^(superpowers|brainstorming|dispatching|executing-|finishing-|receiving-|requesting-|systematic-|test-driven|using-|verification-|writing-)/, 'Навык для планирования, реализации, проверки и сопровождения задач разработки.'],
+    [/^(zapier)/, 'Инструмент Zapier для подключения сервисов и безопасного выполнения автоматизированных действий.'],
+    [/^(telegram|access|configure)/, 'Инструмент для настройки интеграции Telegram и управления доступом.'],
+    [/^(clickhouse|chdb)/, 'Инструмент ClickHouse для проектирования, проверки и оптимизации запросов и хранилищ данных.'],
+    [/^(qodo|code-review|autofix)/, 'Инструмент для автоматизированного ревью кода и повышения качества изменений.'],
+    [/^(sourcegraph|searching-sourcegraph)/, 'Инструмент Sourcegraph для поиска, навигации и анализа кода.']
+  ];
+  for (const [pattern, description] of families) {
+    if (pattern.test(normalized)) return description;
+  }
+  const parent = path.basename(path.dirname(filePath || '')).replace(/[-_]+/g, ' ');
+  return 'Описание навыка «' + name + '» из плагина «' + (parent || 'ZCode') + '».';
+}
+
 function patchSkillDescriptionFile(filePath, push) {
-  const skillName = path.basename(path.dirname(filePath));
-  const replacement = SKILL_DESCRIPTION_RU[skillName];
-  if (!replacement) return 0;
   let text = fs.readFileSync(filePath, 'utf-8');
   const before = text;
+  const skillName = (text.match(/^name:\s*["']?([^\n"']+)/m) || [])[1]?.trim() || path.basename(path.dirname(filePath));
+  const descriptionMatch = text.match(/^description:\s*([^\n]+)/m);
+  if (!descriptionMatch) return 0;
+  const replacement = SKILL_DESCRIPTION_RU[skillName] || (hasUntranslatedDescription(descriptionMatch[1]) ? genericSkillDescription(skillName, filePath) : null);
+  if (!replacement) return 0;
   text = text.replace(
     /^description:\s*[\s\S]*?(?=\n(?:[A-Za-z0-9_-]+:|---))/m,
     'description: ' + yamlQuote(replacement)
@@ -1741,11 +1858,47 @@ function walkSkillFiles(dir, out = []) {
   return out;
 }
 
+function patchPluginManifestDescriptions(root, push) {
+  const home = os.homedir();
+  const roots = [
+    path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
+    path.join(home, '.codex', 'plugins', 'cache'),
+    path.join(root, 'resources', 'glm', 'packages')
+  ];
+  let patched = 0;
+  for (const dir of roots) {
+    for (const filePath of walkMetadataFiles(dir)) {
+      if (!/(^|\\)(?:plugin|package)\.json$/i.test(filePath)) continue;
+      let text;
+      let data;
+      try { text = fs.readFileSync(filePath, 'utf-8'); data = JSON.parse(text); } catch { continue; }
+      let changed = false;
+      const id = String(data.name || data.id || path.basename(path.dirname(filePath)));
+      if (hasUntranslatedDescription(data.description)) {
+        data.description = genericSkillDescription(id, filePath);
+        changed = true;
+      }
+      if (hasUntranslatedDescription(data.displayDescription)) {
+        data.displayDescription = genericSkillDescription(id, filePath);
+        changed = true;
+      }
+      if (changed) {
+        fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\\n', 'utf-8');
+        patched++;
+        push('ok', 'Описание плагина переведено: ' + id);
+      }
+    }
+  }
+  push(patched > 0 ? 'ok' : 'warn', 'Описаний плагинов переведено: ' + patched);
+  return patched;
+}
+
 function patchSkillMetadata(root, push) {
   const home = os.homedir();
   const candidateRootsForSkills = [
     path.join(home, '.codex', 'skills'),
     path.join(home, '.codex', 'plugins', 'cache'),
+    path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
     path.join(root, 'resources', 'glm', 'packages')
   ];
   let patched = 0;
@@ -1963,8 +2116,9 @@ async function patch(input, opts = {}) {
       const pluginPatchedCount = patchGlmPackageMetadata(info.root, push);
       const skillPatchedCount = patchSkillMetadata(info.root, push);
       const pluginCachePatchedCount = patchPluginCacheMetadata(info.root, push);
+      const pluginManifestPatchedCount = patchPluginManifestDescriptions(info.root, push);
 
-      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0) {
+      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0 && pluginManifestPatchedCount === 0) {
         throw new Error('Ни одна замена не сработала — версия ZCode не поддерживается этим патчем');
       }
 

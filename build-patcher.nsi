@@ -1,4 +1,4 @@
-; ZCode-Ru-Patcher v6.3.9
+; ZCode-Ru-Patcher v6.3.6
 ; Правильный формат: тихий NSIS self-extracting patcher, НЕ установщик.
 ; Не использовать InstallDir, MUI-страницы, запись в реестр или установку в AppData.
 
@@ -6,8 +6,8 @@ Unicode true
 RequestExecutionLevel user
 SetCompressor zlib
 
-Name "ZCode Ru Patcher v6.3.9"
-OutFile "ZCode-Ru-Patcher-v6.3.9.exe"
+Name "ZCode Ru Patcher v6.3.6"
+OutFile "ZCode-Ru-Patcher-v6.3.6.exe"
 Icon "extracted\$PLUGINSDIR\app\icon.ico"
 SilentInstall silent
 AutoCloseWindow true
