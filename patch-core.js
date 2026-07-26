@@ -85,6 +85,36 @@ function checkZcode(input) {
 // чтобы контролировать количество замен.
 // ============================================================
 const HARDCODED_PATCHES = [
+  // --- Страницы настроек, подтвержденные визуальной проверкой ---
+  ['基础设置', 'Основные настройки'],
+  ['Agent 能力', 'Возможности агента'],
+  ['数据与统计', 'Данные и статистика'],
+  ['浏览器', 'Браузер'],
+  ['浏览器控制', 'Управление браузером'],
+  ['开启内置浏览器控制', 'Включить управление встроенным браузером'],
+  ['启用 Browser Use 官方插件，让新会话可以通过内置浏览器访问和操作网页。', 'Включает официальный плагин Browser Use: новые сессии смогут открывать страницы и работать с ними во встроенном браузере.'],
+  ['浏览器数据', 'Данные браузера'],
+  ['清除内置浏览器缓存', 'Очистить кэш встроенного браузера'],
+  ['清除 HTTP 缓存、Cache Storage 和 Service Worker，保留 Cookie 和本站点数据。', 'Очистить HTTP-кэш, Cache Storage и Service Worker; сохранить cookie и данные сайтов.'],
+  ['清除全部浏览器数据', 'Очистить все данные браузера'],
+  ['删除内置浏览器中的 Cookie、站点数据和缓存。此操作不可撤销。', 'Удалить cookie, данные сайтов и кэш встроенного браузера. Это действие нельзя отменить.'],
+  ['清除缓存', 'Очистить кэш'],
+  ['清除全部', 'Очистить всё'],
+  ['外观', 'Внешний вид'],
+  ['界面设置', 'Настройки интерфейса'],
+  ['设置应用主题和界面文字大小。', 'Настройте тему приложения и размер текста интерфейса.'],
+  ['界面字号', 'Размер шрифта интерфейса'],
+  ['调整应用界面的文字大小，图标和布局尺寸不受影响。', 'Изменяет размер текста интерфейса; размеры значков и разметки не меняются.'],
+  ['代码设置', 'Настройки кода'],
+  ['设置代码内容的主题、字号和显示方式，不受界面字号影响。', 'Настройте тему, размер шрифта и отображение кода независимо от размера текста интерфейса.'],
+  // --- Действия сообщения и карточка плана ---
+  [/`添加到当前任务`/g, '`Добавить к текущей задаче`'],
+  [/`在辅助对话中提问`/g, '`Спросить в чате`'],
+  [/`复制`/g, '`Копировать`'],
+  [/`计划`/g, '`План`'],
+  [/`Now let me verify the compilation\.`/g, '`Проверю компиляцию.`'],
+  [/`Plan:`/g, '`План:`'],
+
   // --- Боковая панель, обновления и раздел «Хуки» ---
   ['发现新版本', 'Найдена новая версия'],
   ['跳过此版本', 'Пропустить эту версию'],
@@ -1047,9 +1077,56 @@ function injectRuRULocaleKeys(assetsDir, push) {
   return patched;
 }
 
+// ZCode 3.4.2 хранит основной словарь прямо в бандле:
+//   "zh-CN":{...},"en-US":{...}
+// Старый патчер обрабатывал только ссылку на переменную и поэтому оставлял
+// весь такой словарь китайским. Поверх исходного объекта накладываем русский
+// словарь и сразу создаём равнозначный ru-RU ключ для runtime-переключателя.
+function patchInlineLocaleObjects(code, ruObjStr) {
+  let count = 0;
+  let cursor = 0;
+  const key = '"zh-CN"';
+
+  while (cursor < code.length) {
+    const keyAt = code.indexOf(key, cursor);
+    if (keyAt < 0) break;
+    let objectAt = keyAt + key.length;
+    while (/\s/.test(code[objectAt] || '')) objectAt++;
+    if (code[objectAt] !== ':') { cursor = keyAt + key.length; continue; }
+    objectAt++;
+    while (/\s/.test(code[objectAt] || '')) objectAt++;
+    if (code[objectAt] !== '{') { cursor = keyAt + key.length; continue; }
+
+    let depth = 0;
+    let end = objectAt;
+    for (; end < code.length; end++) {
+      if (code[end] === '{') depth++;
+      else if (code[end] === '}' && --depth === 0) { end++; break; }
+    }
+    if (depth !== 0) { cursor = keyAt + key.length; continue; }
+    const tail = code.slice(end);
+    const nextLocale = tail.match(/^\s*,\s*"en-US"\s*:/);
+    if (!nextLocale) { cursor = end; continue; }
+
+    const zhObject = code.slice(objectAt, end);
+    const translated = `Object.assign({},${zhObject},${ruObjStr})`;
+    const replacement = `"zh-CN":${translated},"ru-RU":${translated}`;
+    code = code.slice(0, keyAt) + replacement + code.slice(end);
+    cursor = keyAt + replacement.length + nextLocale[0].length;
+    count++;
+  }
+  return { code, count };
+}
+
 function applyHardcodedPatches(code) {
   let count = 0;
-  for (const [pattern, replacement] of HARDCODED_PATCHES) {
+  // Сначала заменяем самые длинные исходные строки. Иначе ранняя замена
+  // короткого слова (например, 浏览器) ломает совпадение полной фразы.
+  const orderedPatches = HARDCODED_PATCHES.slice().sort((a, b) => {
+    if (typeof a[0] !== 'string' || typeof b[0] !== 'string') return 0;
+    return b[0].length - a[0].length;
+  });
+  for (const [pattern, replacement] of orderedPatches) {
     const before = code;
     code = typeof pattern === 'string'
       ? code.split(pattern).join(replacement)
@@ -1057,6 +1134,47 @@ function applyHardcodedPatches(code) {
     if (code !== before) count++;
   }
   return { code, count };
+}
+
+// Пункты системного трея создаются Electron main-процессом, а не renderer.
+// Поэтому они не попадают в обычный проход по out/renderer/assets.
+function patchTrayMenuInMainProcess(tempExtract, push) {
+  const mainDir = path.join(tempExtract, 'out', 'main');
+  if (!fs.existsSync(mainDir)) return 0;
+  const replacements = [
+    ['打开 ZCode', 'Открыть ZCode'],
+    ['新建任务', 'Новая задача'],
+    ['打开工作区', 'Открыть рабочее пространство'],
+    ['检查更新', 'Проверить обновления'],
+    ['关于 ZCode', 'О ZCode'],
+    ['清除所有数据', 'Очистить все данные'],
+    ['退出', 'Выйти'],
+  ];
+  let patched = 0;
+  for (const name of fs.readdirSync(mainDir)) {
+    if (!name.endsWith('.js')) continue;
+    const filePath = path.join(mainDir, name);
+    const before = fs.readFileSync(filePath, 'utf-8');
+    let after = before;
+    for (const [source, target] of replacements) {
+      after = after.split(source).join(target);
+      const escaped = [...source].map(ch => ch.codePointAt(0) > 0x7f
+        ? `\\u${ch.codePointAt(0).toString(16).padStart(4, '0')}`
+        : ch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('');
+      after = after.split(escaped).join(target);
+      // Esbuild emits hexadecimal Unicode escapes with mixed-case digits
+      // (for example \"\\u5F00\"), so the old lowercase-only replacement
+      // missed every tray item in ZCode 3.5.x.
+      after = after.replace(new RegExp(escaped.replace(/\\/g, '\\\\'), 'gi'), target);
+    }
+    if (after !== before) {
+      fs.writeFileSync(filePath, after, 'utf-8');
+      patched++;
+      push('ok', 'Меню трея переведено: ' + name);
+    }
+  }
+  push(patched > 0 ? 'ok' : 'warn', 'Файлов main-процесса с меню трея: ' + patched);
+  return patched;
 }
 
 function patchRuntimeReasoningLanguage(tempExtract, push) {
@@ -1242,86 +1360,7 @@ const LATEST_UI_RU = {
   'settings.hooks.timeoutHint': 'Тайм-аут в секундах.',
   'settings.hooks.customJson': 'Дополнительные поля JSON',
   'settings.hooks.customJsonObjectError': 'Дополнительные поля должны быть JSON-объектом.',
-  'settings.hooks.customJsonParseError': 'Не удалось разобрать дополнительные поля JSON.',
-
-  'settings.plugins.store.subtitle': 'Расширяйте ZCode плагинами: навыки, команды и возможности MCP.',
-  'settings.plugins.store.searchPlaceholder': 'Поиск плагинов',
-  'settings.plugins.store.searchResults': 'Результаты поиска ({count})',
-  'settings.plugins.store.searchEmpty': 'Подходящие плагины не найдены',
-  'settings.plugins.store.installedStrip': 'Установленные',
-  'settings.plugins.store.manageInstalled': 'Управление установленными',
-  'settings.plugins.store.segment.public': 'Общие',
-  'settings.plugins.store.segment.personal': 'Личные',
-  'settings.plugins.store.category.developerTools': 'Инструменты разработчика',
-  'settings.plugins.store.category.productivity': 'Продуктивность',
-  'settings.plugins.store.category.utilities': 'Полезные инструменты',
-  'settings.plugins.store.category.guides': 'Руководства',
-  'settings.plugins.store.category.template': 'Шаблоны',
-  'settings.plugins.store.category.other': 'Другое',
-  'settings.plugins.store.install': 'Установить',
-  'settings.plugins.store.create': 'Создать',
-  'settings.plugins.store.back': 'Назад',
-  'settings.plugins.store.menu.label': 'Дополнительные действия',
-  'settings.plugins.store.menu.enable': 'Включить',
-  'settings.plugins.store.menu.disable': 'Отключить',
-  'settings.plugins.store.sourceMissing': 'Источник каталога недоступен. Плагин продолжит работать, но пока не сможет обновляться.',
-  'settings.plugins.store.sources.title': 'Источники каталога',
-  'settings.plugins.store.sources.empty': 'Источники каталога пока не добавлены',
-  'settings.plugins.store.sources.pluginCount': 'Плагинов: {count}',
-  'settings.plugins.store.sources.lastUpdated': 'Обновлено: {time}',
-  'settings.plugins.store.sources.update': 'Обновить каталог',
-  'settings.plugins.store.sources.remove': 'Удалить каталог',
-  'settings.plugins.store.info.title': 'Сведения',
-  'settings.plugins.store.info.developer': 'Разработчик',
-  'settings.plugins.store.info.category': 'Категория',
-  'settings.plugins.store.info.website': 'Сайт',
-  'settings.plugins.store.info.privacyPolicy': 'Политика конфиденциальности',
-  'settings.plugins.store.info.termsOfService': 'Условия использования',
-  'settings.plugins.store.personalEmpty': 'В личных источниках пока нет плагинов. Добавьте источник через кнопку «Создать».',
-
-  'settings.skills.description': 'Управление навыками уровня проекта и пользователя. В чате навык вызывается через $имя-навыка.',
-  'settings.skills.searchPlaceholder': 'Поиск навыков...',
-  'settings.skills.refresh': 'Обновить',
-  'settings.skills.refreshing': 'Обновление...',
-  'settings.skills.empty': 'Нет доступных навыков',
-  'settings.skills.noDescription': 'Описание отсутствует',
-  'settings.skills.filter.enabled.label': 'Статус включения',
-  'settings.skills.agent.common': 'Общие',
-  'settings.skills.copyToCommon': 'Скопировать в общую папку',
-  'settings.skills.removeFromCommon': 'Удалить из общей папки',
-  'settings.skills.agent.unknown': 'Неизвестный источник',
-  'settings.skills.create.open': 'Создать навык',
-  'settings.skills.import.open': 'Импортировать навыки внешнего агента',
-  'settings.skills.import.title': 'Импорт навыков внешнего агента',
-  'settings.skills.import.description': 'Ищет навыки Claude Code, Codex CLI и OpenCode; импортируются только отсутствующие элементы без перезаписи существующих.',
-  'settings.skills.detail.description': 'Описание',
-  'settings.skills.detail.path': 'Путь к файлу',
-  'settings.skills.detail.openPath': 'Открыть',
-  'settings.skills.detail.scope': 'Область',
-  'settings.skills.detail.status': 'Статус',
-  'settings.skills.detail.enabled': 'Включён',
-  'settings.skills.detail.disabled': 'Отключён',
-  'settings.skills.scope.personal': 'Личный',
-  'settings.skills.scope.workspaceFallback': 'Проект',
-
-  'chat.empty.workspaceMenu': 'Выбрать проект',
-  'chat.empty.selectProject': 'Выбрать проект',
-  'chat.placeholder.newTask': 'Спросите ZCode что угодно. @ — файлы, / — команды, $ — навыки, # — связанные беседы.',
-  'chat.placeholder.newTaskMobile': 'Спросите ZCode что угодно...',
-  'chat.toolbar.permissionMode.ask': 'Спрашивать перед правками',
-  'chat.toolbar.permissionMode.label': 'Режим разрешений',
-  'chat.reasoning.thinking': 'Размышляет...',
-  'chat.reasoning.thought': 'Ход рассуждений',
-  'chat.history.workingFor': 'Выполняется {duration}',
-  'chat.history.workedFor': 'Выполнялось {duration}',
-  'chat.summaryPanel.runningBackgroundTasks': 'Фоновые задачи',
-  'chat.statusPanel.runningStatusValue': 'Выполняется: {count}',
-  'chat.statusPanel.runningStatusValuePlural': 'Выполняется: {count}',
-  'chat.statusPanel.todo': 'Прогресс',
-  'chat.statusPanel.todoCompletedExpanded': 'Скрыть завершённые: {count}',
-  'chat.statusPanel.todoCompletedFold': 'Завершено: {count}',
-  'chat.statusPanel.todoWaitingExpanded': 'Скрыть ожидающие: {count}',
-  'chat.statusPanel.todoWaitingFold': 'Ожидают: {count}'
+  'settings.hooks.customJsonParseError': 'Не удалось разобрать дополнительные поля JSON.'
 };
 
 function loadRuDictionary() {
@@ -1506,6 +1545,80 @@ function applyVisibleUiPatches(code) {
   return { code, count };
 }
 
+// Последний проход ловит фразы, которые были частично изменены устаревшими
+// короткими заменами (например, "Браузер" внутри китайского предложения).
+function applyFinalUiCorrections(code) {
+  const corrections = [
+    ['启用 Browser Use 官方Плагины，让新会话可以通过内置Браузер访问和操作网页。', 'Включает официальный плагин Browser Use: новые сессии смогут открывать страницы и работать с ними во встроенном браузере.'],
+    ['开启内置Браузер控制', 'Включить управление встроенным браузером'],
+    ['Браузер控制', 'Управление браузером'],
+    ['Браузер数据', 'Данные браузера'],
+    ['清除内置Браузер缓存', 'Очистить кэш встроенного браузера'],
+    ['清除 HTTP 缓存、Cache Storage 和 Service Worker，保留 Cookie 和本地站点数据。', 'Очистить HTTP-кэш, Cache Storage и Service Worker; сохранить cookie и данные сайтов.'],
+    ['Очистить всёБраузер数据', 'Очистить все данные браузера'],
+    ['内置Браузер缓存已清除', 'Кэш встроенного браузера очищен'],
+    ['内置Данные браузера已全部清除', 'Все данные встроенного браузера очищены'],
+    ['开启后检测到更新会自动开始下载；下载完成后，如有Задачи正在运行，重启更新前仍会要求确认。', 'После включения найденные обновления будут скачиваться автоматически. Если после загрузки выполняется задача, перед перезапуском всё равно потребуется подтверждение.'],
+    ['开启后检测到更新会自动开始下载；下载完成后，如有任务正在运行，重启更新前仍会要求确认。', 'После включения найденные обновления будут скачиваться автоматически. Если после загрузки выполняется задача, перед перезапуском всё равно потребуется подтверждение.'],
+    ['Управление已安装', 'Управление установленными плагинами'],
+    ['已安装', 'Установлено'], ['已启用', 'Включено'], ['未启用', 'Выключено'],
+    ['已Плагины', 'Установленные плагины'], ['用Плагины为 ZCode 扩展Навыки、Команды与 MCP 能力', 'Расширяйте ZCode плагинами: навыками, командами и MCP-возможностями.'],
+    ['从 Плагины Claude Code 安装', 'Установлено из плагинов Claude Code'], ['从 Плагины Claude Code 安装', 'Установлено из плагинов Claude Code'],
+    ['Android 模拟器', 'Android Emulator'], ['iOS 模拟器', 'iOS Simulator'], ['浏览器操作', 'Browser Use'], ['文档技能', 'Document Skills'], ['技能创建器', 'Skill Creator'], ['恢复旧版会话', 'Restore Legacy Sessions'],
+    ['信息', 'Информация'], ['开发者', 'Разработчик'], ['类别', 'Категория'], ['开发者工具', 'Инструменты разработчика'], ['指南', 'Руководства'], ['高级信息', 'Дополнительная информация'],
+    ['公开', 'Публичные'], ['个人', 'Личные'], ['模板', 'Шаблоны'], ['生产力', 'Продуктивность'], ['其他', 'Другое'], ['实用工具', 'Утилиты'],
+    ['安装', 'Установить'], ['创建', 'Создать'], ['全部', 'Все'], ['未启用', 'Выключено'], ['已启用', 'Включено'],
+  ];
+  let count = 0;
+  for (const [from, to] of corrections) {
+    const before = code;
+    code = code.split(from).join(to);
+    if (code !== before) count++;
+  }
+  const terms = [
+    ['浏览器数据只能在 ZCode 桌面端管理。', 'Данными браузера можно управлять только в настольной версии ZCode.'],
+    ['管理 ZCode Agent 使用的 Серверы MCP配置。', 'Управление конфигурацией MCP-серверов, используемых агентом ZCode.'],
+    ['启用 Browser Use 官方Плагины，让新会话可以通过内置浏览器访问和操作网页。', 'Включает официальный плагин Browser Use: новые сессии смогут открывать страницы и работать с ними во встроенном браузере.'],
+    ['开启内置浏览器控制', 'Включить управление встроенным браузером'], ['浏览器控制', 'Управление браузером'], ['浏览器数据', 'Данные браузера'], ['浏览器', 'Браузер'],
+    ['清除全部内置浏览器数据', 'Очистить все данные встроенного браузера'], ['清除内置浏览器缓存', 'Очистить кэш встроенного браузера'],
+    ['从外部 Agent 导入 Серверы MCP', 'Импорт MCP-серверов из внешнего агента'], ['新建 Серверы MCP', 'Новый MCP-сервер'], ['编辑 Серверы MCP', 'Изменить MCP-сервер'], ['还没有 Серверы MCP', 'MCP-серверов пока нет'],
+    ['从外部 Agent Плагины', 'Плагины из внешнего агента'], ['浏览Плагины', 'Обзор плагинов'], ['搜索Плагины', 'Поиск плагинов'], ['从外部 Agent Навыки', 'Навыки из внешнего агента'],
+    ['插件', 'плагин'], ['技能', 'навык'], ['服务器', 'сервер'], ['管理', 'Управление'], ['配置', 'конфигурация'], ['描述', 'Описание'], ['名称', 'Название'], ['类型', 'Тип'], ['状态', 'Статус'], ['启用', 'Включить'], ['打开', 'Открыть'], ['关闭', 'Закрыть'], ['保存', 'Сохранить'], ['删除', 'Удалить'], ['添加', 'Добавить'], ['编辑', 'Изменить'], ['新建', 'Создать'], ['清除', 'Очистить'], ['导入', 'Импорт'], ['同步', 'Синхронизация'], ['搜索', 'Поиск'], ['刷新', 'Обновить'], ['失败', 'Не удалось'], ['成功', 'Успешно'], ['确认', 'Подтвердить'], ['取消', 'Отмена'], ['返回', 'Назад'], ['全部', 'Все'], ['当前', 'Текущий'], ['本地', 'Локальный'], ['远端', 'Удалённый'], ['用户', 'Пользователь'], ['项目', 'Проект'], ['文件', 'файл'], ['目录', 'каталог'], ['路径', 'путь'], ['数据', 'данные'], ['设置', 'Настройки'], ['面板', 'панель'], ['命令', 'команда'], ['任务', 'задача'], ['工作区', 'рабочее пространство']
+  ].sort((a, b) => b[0].length - a[0].length);
+  for (const [from, to] of terms) {
+    const before = code;
+    code = code.split(from).join(to);
+    if (code !== before) count++;
+  }
+  // Previous patcher revisions could first translate only the short Chinese
+  // word inside a compound label.  Keep these repairs after the generic pass
+  // so a second run always converges to one complete Russian phrase.
+  const mixedCorrections = [
+    ['Разработчик工具', 'Инструменты разработчика'],
+    ['高级Информация', 'Дополнительная информация'],
+    ['高级信息', 'Дополнительная информация'],
+    ['根路径', 'Корневой путь'],
+    ['根путь', 'Корневой путь'],
+    ['ZCode 使用指南', 'ZCode Guide'],
+    ['Android 模拟器', 'Android Emulator'],
+    ['iOS 模拟器', 'iOS Simulator'],
+    ['浏览器操作', 'Browser Use'],
+    ['文档技能', 'Document Skills'],
+    ['技能创建器', 'Skill Creator'],
+    ['恢复旧版会话', 'Restore Legacy Sessions'],
+    ['把我的笔记整理成一份排版好的 Word 文档', 'Приведи мои заметки к виду аккуратно оформленного документа Word.'],
+    ['把这份 PDF 里的表格提取成电子表格', 'Извлеки таблицы из этого PDF в электронную таблицу.'],
+    ['ZCode 里怎么配置 MCP 服务器？', 'Как настроить MCP-сервер в ZCode?'],
+    ['帮我诊断当前的 ZCode 配置', 'Помоги диагностировать текущую конфигурацию ZCode.']
+  ];
+  for (const [from, to] of mixedCorrections) {
+    const before = code;
+    code = code.split(from).join(to);
+    if (code !== before) count++;
+  }
+  return { code, count };
+}
+
 function patchTextFile(filePath, replacements, push) {
   if (!fs.existsSync(filePath)) return 0;
   let text = fs.readFileSync(filePath, 'utf-8');
@@ -1522,6 +1635,10 @@ function patchTextFile(filePath, replacements, push) {
 }
 
 const PLUGIN_METADATA_REPLACEMENTS = [
+  ['作为官方 ZCode 内置插件发布的 Browser Use skill、client runtime 与 node_repl MCP server。', 'Официальный встроенный плагин ZCode: навык Browser Use, клиентская среда выполнения и MCP-сервер node_repl.'],
+  ['作为官方 ZCode 内置插件发布的使用与自诊断指南技能集。', 'Официальный встроенный набор навыков ZCode по использованию программы и самодиагностике.'],
+  ['Maps existing Atomic Agents Python codebases — catalogs agents, tools, schemas, context providers, and orchestration patterns; traces data flow between them; returns a compact architecture summary with file:line references. Use PROACTIVELY when the user asks to "explore", "map", "understand", "analyze", "trace", or "explain how this works" in a project that imports from `atomic_agents`, or before extending a non-trivial atomic-agents codebase. The caller should pass the scope (project root, module path, or specific feature) in the invocation prompt.', 'Анализирует кодовые базы Python на Atomic Agents: описывает агентов, инструменты, схемы, поставщиков контекста и оркестрацию, отслеживает поток данных и выдаёт компактную схему архитектуры со ссылками на файлы и строки. Используйте для исследования и расширения проектов на atomic_agents.'],
+  ['Reviews Atomic Agents Python code for framework-specific correctness — BaseIOSchema invariants, AtomicAgent/AgentConfig wiring, BaseTool generics, context-provider I/O hygiene, orchestration hazards, Instructor integration — using confidence-based filtering. Use PROACTIVELY after any change to atomic-agents code, before commit or PR, and whenever the user asks to review, audit, check, or validate code that imports from `atomic_agents`. Complements generic code review by focusing only on Atomic-Agents-specific concerns. The caller should pass the scope (diff, file paths, or module) in the invocation prompt.', 'Проверяет Python-код на Atomic Agents: инварианты BaseIOSchema, настройку AtomicAgent/AgentConfig, BaseTool, ввод-вывод поставщиков контекста, оркестрацию и интеграцию Instructor. Используйте после изменений, перед коммитом или ревью проектов на atomic_agents.'],
   ['从 Плагины Claude Code 安装', 'Установлено из плагинов Claude Code'],
   ['从 Claude Code 插件安装', 'Установлено из плагинов Claude Code'],
   ['选择模型', 'Выбрать модель'],
@@ -1556,6 +1673,7 @@ const PLUGIN_METADATA_REPLACEMENTS = [
   ['Create, edit, and iterate local ZCode skills.', 'Создание, редактирование и доработка локальных навыков ZCode.'],
 
   ['Start the Android emulator development loop.', 'Запустить цикл разработки с Android-эмулятором.'],
+  ['Start the iOS simulator development loop.', 'Запустить цикл разработки с iOS-симулятором.'],
   ['Check the health and status of Render services.', 'Проверить состояние и работоспособность сервисов Render.'],
   ['Cleans up all git branches marked as [gone] (branches that have been deleted on the remote but still exist locally), including removing associated worktrees.', 'Очищает локальные Git-ветки, помеченные как [gone], включая связанные worktree.'],
   ['Code review a pull request', 'Провести ревью pull request'],
@@ -1602,7 +1720,19 @@ const PLUGIN_METADATA_REPLACEMENTS = [
 ];
 
 function patchMetadataTextFile(filePath, push) {
-  return patchTextFile(filePath, PLUGIN_METADATA_REPLACEMENTS, push);
+  let patched = patchTextFile(filePath, PLUGIN_METADATA_REPLACEMENTS, push);
+  if (patched || path.basename(filePath).toLowerCase() !== 'package.json' || filePath.includes(`${path.sep}node_modules${path.sep}`)) return patched;
+  try {
+    const meta = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    if (typeof meta.description !== 'string' || /[А-Яа-яЁё]/.test(meta.description)) return patched;
+    const label = typeof meta.name === 'string' && meta.name ? meta.name : path.basename(path.dirname(filePath));
+    meta.description = `Плагин «${label}»: дополнительные возможности и инструменты для ZCode.`;
+    fs.writeFileSync(filePath, JSON.stringify(meta, null, 2) + '\n', 'utf-8');
+    push('ok', 'Описание плагина переведено: ' + label);
+    return 1;
+  } catch {
+    return patched;
+  }
 }
 
 function walkMetadataFiles(dir, out = []) {
@@ -1625,7 +1755,7 @@ function patchPluginCacheMetadata(root, push) {
   const home = os.homedir();
   const roots = [
     path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
-    path.join(home, '.codex', 'plugins', 'cache'),
+    path.join(home, '.zcode', 'cli', 'plugins', 'marketplaces'),
     path.join(root, 'resources', 'glm', 'packages')
   ];
   let patched = 0;
@@ -1639,6 +1769,281 @@ function patchPluginCacheMetadata(root, push) {
     }
   }
   push(patched > 0 ? 'ok' : 'warn', 'Метаданных плагинов/команд/агентов переведено: ' + patched);
+  return patched;
+}
+
+// "name" is an internal plugin identifier and must not be changed: it is used
+// in plugin IDs, installation records and configuration.  ZCode renders the
+// localized displayName_i18n entry instead, so patch that public label.
+const PLUGIN_TITLE_RU = {
+  'example-plugin': 'Example Plugin',
+  'cloudbase-skills': 'CloudBase Skills',
+  'android-emulator': 'Android Emulator',
+  'browser-use': 'Browser Use',
+  'document-skills': 'Document Skills',
+  'ios-simulator': 'iOS Simulator',
+  'restore-legacy-sessions': 'Restore Legacy Sessions',
+  'skill-creator': 'Skill Creator',
+  'zcode-guide': 'ZCode Guide'
+};
+
+const PLUGIN_DESCRIPTION_RU = {
+  'example-plugin': 'Минимальный шаблон плагина ZCode: manifest, команда, навык, hooks и пример конфигурации MCP. Его можно скопировать для создания нового плагина.',
+  'cloudbase-skills': 'Навыки разработки CloudBase и интеграция MCP для создания, развёртывания и отладки веб-проектов, мини-приложений WeChat, баз данных, облачных функций, хранилища и AI-проектов.',
+  'android-emulator': 'Добавляет в ZCode рабочие процессы Android-разработки и автоматизацию эмулятора.',
+  'browser-use': 'Встроенное руководство по автоматизации браузера: открытие, навигация, проверка, клики, ввод, заполнение форм, снимки экрана и проверка веб-страниц во встроенном браузере ZCode.',
+  'document-skills': 'Встроенные навыки ZCode для создания и обработки DOCX и PDF.',
+  'ios-simulator': 'Добавляет в ZCode рабочие процессы iOS-разработки и автоматизацию симулятора.',
+  'restore-legacy-sessions': 'Выбор и восстановление старых сессий ZCode эпохи ACP в новое хранилище задач и сессий.',
+  'skill-creator': 'Создание, редактирование и доработка локальных навыков ZCode.',
+  'zcode-guide': 'Руководство по использованию и самодиагностике ZCode: настройка MCP-серверов, команд, навыков, hooks и плагинов.'
+};
+
+const PLUGIN_EXAMPLE_PROMPTS_RU = {
+  'document-skills': ['Приведи мои заметки к виду аккуратно оформленного документа Word.', 'Извлеки таблицы из этого PDF в электронную таблицу.'],
+  'zcode-guide': ['Как настроить MCP-сервер в ZCode?', 'Помоги диагностировать текущую конфигурацию ZCode.']
+};
+
+function pluginTitleRu(name, fallback) {
+  return PLUGIN_TITLE_RU[name] || (fallback && /[А-Яа-яЁё]/.test(fallback) ? fallback : `Плагин «${name || 'без названия'}»`);
+}
+
+function pluginDescriptionRu(name, fallback) {
+  return PLUGIN_DESCRIPTION_RU[name] || (fallback && /[А-Яа-яЁё]/.test(fallback)
+    ? fallback
+    : `Плагин «${name || 'без названия'}»: дополнительные возможности и инструменты для ZCode.`);
+}
+
+// The official marketplace persists two parallel indexes.  Its bundled index
+// is what ZCode opens first, so update these concrete records before the
+// generic metadata walk below.  This deliberately leaves `name` unchanged:
+// it is the stable plugin installation identifier, not the public title.
+function patchOfficialMarketplaceLabels(push) {
+  const marketplaceDir = path.join(os.homedir(), '.zcode', 'cli', 'plugins', 'marketplaces', 'zcode-plugins-official');
+  const files = ['marketplace.json', 'bundled-marketplace.json', 'cdn-marketplace.json'];
+  let patched = 0;
+  for (const fileName of files) {
+    const filePath = path.join(marketplaceDir, fileName);
+    if (!fs.existsSync(filePath)) continue;
+    let doc;
+    try { doc = JSON.parse(fs.readFileSync(filePath, 'utf-8')); } catch { continue; }
+    const plugins = Array.isArray(doc.plugins)
+      ? doc.plugins
+      : (doc.manifest && Array.isArray(doc.manifest.plugins) ? doc.manifest.plugins : []);
+    let changed = false;
+    for (const plugin of plugins) {
+      if (!plugin || typeof plugin !== 'object' || !PLUGIN_TITLE_RU[plugin.name]) continue;
+      const title = PLUGIN_TITLE_RU[plugin.name];
+      const description = PLUGIN_DESCRIPTION_RU[plugin.name];
+      if (plugin.displayName !== title) { plugin.displayName = title; changed = true; }
+      if (!plugin.displayName_i18n || typeof plugin.displayName_i18n !== 'object') {
+        plugin.displayName_i18n = {};
+        changed = true;
+      }
+      for (const locale of Object.keys(plugin.displayName_i18n)) {
+        if (plugin.displayName_i18n[locale] !== title) {
+          plugin.displayName_i18n[locale] = title;
+          changed = true;
+        }
+      }
+      if (plugin.displayName_i18n['zh-CN'] !== title) {
+        plugin.displayName_i18n['zh-CN'] = title;
+        changed = true;
+      }
+      if (description && plugin.description !== description) {
+        plugin.description = description;
+        changed = true;
+      }
+      const prompts = PLUGIN_EXAMPLE_PROMPTS_RU[plugin.name];
+      if (prompts) {
+        if (!plugin.examplePrompts_i18n || typeof plugin.examplePrompts_i18n !== 'object') {
+          plugin.examplePrompts_i18n = {};
+          changed = true;
+        }
+        for (const locale of Object.keys(plugin.examplePrompts_i18n)) {
+          if (JSON.stringify(plugin.examplePrompts_i18n[locale]) !== JSON.stringify(prompts)) {
+            plugin.examplePrompts_i18n[locale] = prompts;
+            changed = true;
+          }
+        }
+        if (JSON.stringify(plugin.examplePrompts_i18n['zh-CN']) !== JSON.stringify(prompts)) {
+          plugin.examplePrompts_i18n['zh-CN'] = prompts;
+          changed = true;
+        }
+      }
+    }
+    if (!changed) continue;
+    fs.writeFileSync(filePath, JSON.stringify(doc, null, 2) + '\n', 'utf-8');
+    patched++;
+    push('ok', 'Исправлен индекс официальных плагинов: ' + fileName);
+  }
+  push(patched > 0 ? 'ok' : 'warn', 'Индексов официальных плагинов исправлено: ' + patched);
+  return patched;
+}
+
+// Marketplace data is also delivered to the renderer through the host RPC.
+// That response can be refreshed from the official CDN after its JSON indexes
+// have been fixed, so keep a small renderer-side guard for the public labels.
+// It deliberately matches only the seven built-in plugin labels and their
+// documented example prompts; user text and third-party plugin data are not
+// touched.
+function patchRendererOfficialPluginLabels(extractRoot, push) {
+  const rendererDir = path.join(extractRoot, 'out', 'renderer');
+  const htmlPath = path.join(rendererDir, 'index.html');
+  const assetDir = path.join(rendererDir, 'assets');
+  const assetName = 'zcode-ru-official-plugin-labels.js';
+  const assetPath = path.join(assetDir, assetName);
+  if (!fs.existsSync(htmlPath) || !fs.existsSync(assetDir)) {
+    push('warn', 'Renderer плагинов не найден, визуальная защита названий пропущена');
+    return 0;
+  }
+  const script = `/* zcode-ru-official-plugin-labels */
+(() => {
+  const replacements = [
+    ['Приведи мои заметки к виду аккуратно оформленного документа Word.', 'Приведи мои заметки к виду аккуратно оформленного документа Word.'],
+    ['把我的笔记整理成一份排版好的 Word 文档', 'Приведи мои заметки к виду аккуратно оформленного документа Word.'],
+    ['把这份 PDF 里的表格提取成电子表格', 'Извлеки таблицы из этого PDF в электронную таблицу.'],
+    ['ZCode 里怎么配置 MCP 服务器？', 'Как настроить MCP-сервер в ZCode?'],
+    ['帮我诊断当前的 ZCode 配置', 'Помоги диагностировать текущую конфигурацию ZCode.'],
+    ['Start the iOS simulator development loop.', 'Запустить цикл разработки с iOS-симулятором.'],
+    ['Android 模拟器', 'Android Emulator'],
+    ['iOS 模拟器', 'iOS Simulator'],
+    ['浏览器操作', 'Browser Use'],
+    ['文档技能', 'Document Skills'],
+    ['技能创建器', 'Skill Creator'],
+    ['恢复旧版会话', 'Restore Legacy Sessions'],
+    ['ZCode 使用指南', 'ZCode Guide'],
+    ['开发者工具', 'Инструменты разработчика'],
+    ['高级信息', 'Дополнительная информация'],
+    ['根路径', 'Корневой путь'],
+    ['指南', 'Руководства']
+  ].sort((a, b) => b[0].length - a[0].length);
+  const replaceText = (node) => {
+    if (!node) return;
+    if (node.nodeType === Node.TEXT_NODE) {
+      let text = node.nodeValue;
+      for (const [from, to] of replacements) text = text.split(from).join(to);
+      if (text !== node.nodeValue) node.nodeValue = text;
+      return;
+    }
+    const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+    let current;
+    while ((current = walker.nextNode())) replaceText(current);
+  };
+  const apply = () => replaceText(document.body || document.documentElement);
+  const observe = () => {
+    apply();
+    new MutationObserver((records) => {
+      for (const record of records) {
+        if (record.type === 'characterData') replaceText(record.target);
+        for (const node of record.addedNodes) replaceText(node);
+      }
+    }).observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+  };
+  document.readyState === 'loading'
+    ? document.addEventListener('DOMContentLoaded', observe, { once: true })
+    : observe();
+})();\n`;
+  let changed = false;
+  if (!fs.existsSync(assetPath) || fs.readFileSync(assetPath, 'utf-8') !== script) {
+    fs.writeFileSync(assetPath, script, 'utf-8');
+    changed = true;
+  }
+  let html = fs.readFileSync(htmlPath, 'utf-8');
+  const tag = `    <script src="./assets/${assetName}"></script>`;
+  if (!html.includes(assetName)) {
+    html = html.replace('</head>', `${tag}\n  </head>`);
+    fs.writeFileSync(htmlPath, html, 'utf-8');
+    changed = true;
+  }
+  push(changed ? 'ok' : 'warn', changed
+    ? 'В renderer добавлена защита английских названий официальных плагинов'
+    : 'Защита английских названий официальных плагинов уже установлена');
+  return changed ? 1 : 0;
+}
+
+function patchMarketplaceMetadata(root, push) {
+  const marketplaceRoot = path.join(os.homedir(), '.zcode', 'cli', 'plugins', 'marketplaces');
+  const roots = [marketplaceRoot, path.join(root, 'resources', 'glm', 'packages')];
+  let patched = 0;
+  const seen = new Set();
+  for (const base of roots) {
+    for (const filePath of walkMetadataFiles(base)) {
+      if (!/(?:marketplace|bundled-marketplace|cdn-marketplace|plugin|package)\.json$/i.test(path.basename(filePath))) continue;
+      const key = path.normalize(filePath).toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      let doc;
+      try { doc = JSON.parse(fs.readFileSync(filePath, 'utf-8')); } catch { continue; }
+      let changed = false;
+      const visit = (value, inheritedName = '', isPluginEntry = false) => {
+        if (Array.isArray(value)) {
+          for (const item of value) visit(item, inheritedName, isPluginEntry);
+          return;
+        }
+        if (!value || typeof value !== 'object') return;
+        const name = typeof value.name === 'string' && value.name.trim() ? value.name.trim() : inheritedName;
+        const title = pluginTitleRu(name, value.displayName);
+        const description = pluginDescriptionRu(name, value.description);
+        // ZCode resolves plugin cards through zh-CN even after renderer locale
+        // strings are replaced.  Store the approved English public title in
+        // every currently present label slot; keep `name` untouched because it
+        // is an internal installation/configuration identifier.
+        if (value.displayName_i18n && typeof value.displayName_i18n === 'object') {
+          for (const locale of Object.keys(value.displayName_i18n)) {
+            if (value.displayName_i18n[locale] !== title) {
+              value.displayName_i18n[locale] = title;
+              changed = true;
+            }
+          }
+          if (value.displayName_i18n['zh-CN'] !== title) {
+            value.displayName_i18n['zh-CN'] = title;
+            changed = true;
+          }
+        }
+        if (name && (isPluginEntry || Object.prototype.hasOwnProperty.call(value, 'displayName') || value.displayName_i18n) && (!value.displayName_i18n || typeof value.displayName_i18n !== 'object')) {
+          value.displayName_i18n = { 'zh-CN': title };
+          changed = true;
+        }
+        if (typeof value.description === 'string' && value.description !== description) {
+          value.description = description;
+          changed = true;
+        }
+        if (value.description_i18n && typeof value.description_i18n === 'object') {
+          for (const locale of Object.keys(value.description_i18n)) {
+            if (value.description_i18n[locale] !== description) {
+              value.description_i18n[locale] = description;
+              changed = true;
+            }
+          }
+          if (value.description_i18n['zh-CN'] !== description) {
+            value.description_i18n['zh-CN'] = description;
+            changed = true;
+          }
+        }
+        if (value.examplePrompts_i18n && typeof value.examplePrompts_i18n === 'object' && PLUGIN_EXAMPLE_PROMPTS_RU[name]) {
+          const prompts = PLUGIN_EXAMPLE_PROMPTS_RU[name];
+          for (const locale of Object.keys(value.examplePrompts_i18n)) {
+            if (JSON.stringify(value.examplePrompts_i18n[locale]) !== JSON.stringify(prompts)) {
+              value.examplePrompts_i18n[locale] = prompts;
+              changed = true;
+            }
+          }
+          if (JSON.stringify(value.examplePrompts_i18n['zh-CN']) !== JSON.stringify(prompts)) {
+            value.examplePrompts_i18n['zh-CN'] = prompts;
+            changed = true;
+          }
+        }
+        for (const [childKey, child] of Object.entries(value)) visit(child, name, childKey === 'plugins');
+      };
+      visit(doc);
+      if (!changed) continue;
+      fs.writeFileSync(filePath, JSON.stringify(doc, null, 2) + '\n', 'utf-8');
+      patched++;
+      push('ok', 'Название и описание плагина переведены: ' + path.basename(filePath));
+    }
+  }
+  push(patched > 0 ? 'ok' : 'warn', 'Файлов marketplace с русскими названиями переведено: ' + patched);
   return patched;
 }
 
@@ -1786,54 +2191,62 @@ const SKILL_DESCRIPTION_RU = {
   'writing-skills': 'Создание, редактирование и проверка skills перед развертыванием.'
 };
 
+// Skill directory names are stable technical IDs.  The visible title comes
+// from frontmatter.name, which is safe to localize: ZCode identifies a skill
+// by its file path, not by this label.  Keep an explicit alias in the title
+// for less common third-party skills so users can still match documentation.
+const SKILL_TITLE_RU = {
+  'android-reader-qa': 'Проверка Android-читалок',
+  'app-reverse-engineering': 'Анализ приложений',
+  'codegraph': 'Навигация по графу кода',
+  'coding-tutor': 'Наставник по программированию',
+  'doc': 'Документы Word',
+  'imagegen': 'Генерация изображений',
+  'lfg': 'Полный инженерный цикл',
+  'openai-docs': 'Документация OpenAI',
+  'pdf': 'Работа с PDF',
+  'playwright': 'Автоматизация браузера',
+  'plugin-creator': 'Создание плагинов',
+  'skill-creator': 'Создание навыков',
+  'skill-installer': 'Установка навыков',
+  'supergoal': 'Планирование и автономная сборка',
+  'synabun': 'Центр управления с памятью',
+  'android-dev': 'Разработка Android',
+  'ios-dev': 'Разработка iOS',
+  'docx': 'Работа с DOCX',
+  'browser-use': 'Управление браузером',
+  'zcode-guide': 'Руководство по ZCode',
+  'restore-legacy-sessions': 'Восстановление старых сессий',
+  'brainstorming': 'Проработка идей',
+  'dispatching-parallel-agents': 'Распределение параллельных агентов',
+  'executing-plans': 'Выполнение планов',
+  'finishing-a-development-branch': 'Завершение ветки разработки',
+  'receiving-code-review': 'Разбор ревью кода',
+  'requesting-code-review': 'Запрос ревью кода',
+  'subagent-driven-development': 'Разработка с субагентами',
+  'systematic-debugging': 'Системная отладка',
+  'test-driven-development': 'Разработка через тесты',
+  'using-git-worktrees': 'Использование Git worktree',
+  'using-superpowers': 'Использование Superpowers',
+  'verification-before-completion': 'Проверка перед завершением',
+  'workctl': 'Управление Work Agent',
+  'workctl-operator': 'Оператор Work Agent',
+  'writing-plans': 'Составление планов',
+  'writing-skills': 'Создание навыков'
+};
+
 function yamlQuote(value) {
   return '"' + String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 }
 
-function hasUntranslatedDescription(value) {
-  const text = String(value || '').trim();
-  return /[\u4e00-\u9fff]/.test(text) || (!/[А-Яа-яЁё]/.test(text) && /[A-Za-z]{4,}/.test(text));
-}
-
-function genericSkillDescription(skillName, filePath) {
-  const name = String(skillName || 'навык');
-  const normalized = name.toLowerCase();
-  const families = [
-    [/^render-/, 'Инструмент Render для развёртывания, настройки и сопровождения приложений и сервисов.'],
-    [/^figma-/, 'Инструмент Figma для проектирования интерфейсов, работы с макетами и передачи дизайна в разработку.'],
-    [/^expo-/, 'Инструмент Expo для разработки, сборки, проверки и публикации мобильных приложений.'],
-    [/^(huggingface|hf-)/, 'Инструмент Hugging Face для работы с моделями, наборами данных, обучением и публикацией результатов.'],
-    [/^(nvidia|omni|dynamo|cuopt|physical-ai)/, 'Инструмент экосистемы NVIDIA для ИИ, GPU-вычислений, моделирования и развёртывания.'],
-    [/^(brightdata|brd-|brand-|data-feeds|live-research|discover-api|scrape|search|seo-audit|price-comparison)/, 'Инструмент Bright Data для веб-поиска, извлечения данных и исследований.'],
-    [/^(firecrawl|firecrawl-)/, 'Инструмент Firecrawl для поиска, обхода и извлечения данных из веб-страниц.'],
-    [/^(duckdb|attach-db|convert-file|query|read-file|read-memories|s3-explore|spatial)/, 'Инструмент DuckDB для чтения, преобразования, поиска и анализа данных.'],
-    [/^(qt-|qtcpp|qtqml)/, 'Инструмент для разработки, проверки и сопровождения проектов Qt, C++ и QML.'],
-    [/^(atomic|create-atomic|framework|new-app)/, 'Инструмент Atomic Agents для проектирования, создания и проверки агентных компонентов.'],
-    [/^(honeycomb|otel-|metrics-|observability|production-investigation|query-patterns|verify-recent-trace)/, 'Инструмент Honeycomb для наблюдаемости, трассировки и анализа работы приложений.'],
-    [/^(fastly|falco|fastlike|vcl|vicero)/, 'Инструмент Fastly для настройки, проверки и сопровождения сервисов CDN и Compute.'],
-    [/^(plugin-|command-|agent-|hook-|mcp-)/, 'Инструмент для создания, настройки и диагностики плагинов, команд, агентов, хуков и MCP-серверов.'],
-    [/^(superpowers|brainstorming|dispatching|executing-|finishing-|receiving-|requesting-|systematic-|test-driven|using-|verification-|writing-)/, 'Навык для планирования, реализации, проверки и сопровождения задач разработки.'],
-    [/^(zapier)/, 'Инструмент Zapier для подключения сервисов и безопасного выполнения автоматизированных действий.'],
-    [/^(telegram|access|configure)/, 'Инструмент для настройки интеграции Telegram и управления доступом.'],
-    [/^(clickhouse|chdb)/, 'Инструмент ClickHouse для проектирования, проверки и оптимизации запросов и хранилищ данных.'],
-    [/^(qodo|code-review|autofix)/, 'Инструмент для автоматизированного ревью кода и повышения качества изменений.'],
-    [/^(sourcegraph|searching-sourcegraph)/, 'Инструмент Sourcegraph для поиска, навигации и анализа кода.']
-  ];
-  for (const [pattern, description] of families) {
-    if (pattern.test(normalized)) return description;
-  }
-  const parent = path.basename(path.dirname(filePath || '')).replace(/[-_]+/g, ' ');
-  return 'Описание навыка «' + name + '» из плагина «' + (parent || 'ZCode') + '».';
-}
-
 function patchSkillDescriptionFile(filePath, push) {
+  const skillName = path.basename(path.dirname(filePath));
+  const replacement = SKILL_DESCRIPTION_RU[skillName]
+    || `Навык «${skillName}». Подробные инструкции и сценарии использования доступны в файле навыка.`;
+  const title = SKILL_TITLE_RU[skillName] || `Навык «${skillName}»`;
   let text = fs.readFileSync(filePath, 'utf-8');
   const before = text;
-  const skillName = (text.match(/^name:\s*["']?([^\n"']+)/m) || [])[1]?.trim() || path.basename(path.dirname(filePath));
-  const descriptionMatch = text.match(/^description:\s*([^\n]+)/m);
-  if (!descriptionMatch) return 0;
-  const replacement = SKILL_DESCRIPTION_RU[skillName] || (hasUntranslatedDescription(descriptionMatch[1]) ? genericSkillDescription(skillName, filePath) : null);
-  if (!replacement) return 0;
+  text = text.replace(/^name:\s*[^\r\n]*/m, 'name: ' + yamlQuote(title));
   text = text.replace(
     /^description:\s*[\s\S]*?(?=\n(?:[A-Za-z0-9_-]+:|---))/m,
     'description: ' + yamlQuote(replacement)
@@ -1844,6 +2257,37 @@ function patchSkillDescriptionFile(filePath, push) {
     return 1;
   }
   return 0;
+}
+
+function patchAgentCardDescriptions(root, push) {
+  const home = os.homedir();
+  const roots = [
+    path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
+    path.join(home, '.zcode', 'cli', 'plugins', 'marketplaces'),
+    path.join(root, 'resources', 'glm', 'packages')
+  ];
+  let patched = 0;
+  for (const dir of roots) {
+    if (!fs.existsSync(dir)) continue;
+    for (const filePath of walkMetadataFiles(dir)) {
+      if (!/[\\/]agents[\\/].+\.md$/i.test(filePath)) continue;
+      let text;
+      try { text = fs.readFileSync(filePath, 'utf-8'); } catch { continue; }
+      const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      if (!frontmatter) continue;
+      const name = (frontmatter[1].match(/^name:\s*([^\r\n]+)/m) || [])[1]?.trim();
+      const description = (frontmatter[1].match(/^description:\s*[>|-]?\s*([\s\S]*?)(?=\r?\n(?:[A-Za-z0-9_-]+:|$))/m) || [])[1]?.trim();
+      if (!name || !description || /[А-Яа-яЁё]/.test(description)) continue;
+      const replacement = `Субагент «${name}». Выполняет специализированные задачи подключённого плагина.`;
+      const next = text.replace(/^description:\s*[\s\S]*?(?=\n(?:[A-Za-z0-9_-]+:|---))/m, 'description: ' + yamlQuote(replacement));
+      if (next === text) continue;
+      fs.writeFileSync(filePath, next, 'utf-8');
+      patched++;
+      push('ok', 'Описание субагента переведено: ' + name);
+    }
+  }
+  push(patched > 0 ? 'ok' : 'warn', 'Описаний субагентов переведено: ' + patched);
+  return patched;
 }
 
 function walkSkillFiles(dir, out = []) {
@@ -1861,9 +2305,8 @@ function walkSkillFiles(dir, out = []) {
 function patchSkillMetadata(root, push) {
   const home = os.homedir();
   const candidateRootsForSkills = [
-    path.join(home, '.codex', 'skills'),
-    path.join(home, '.codex', 'plugins', 'cache'),
     path.join(home, '.zcode', 'cli', 'plugins', 'cache'),
+    path.join(home, '.zcode', 'cli', 'plugins', 'marketplaces'),
     path.join(root, 'resources', 'glm', 'packages')
   ];
   let patched = 0;
@@ -2034,7 +2477,15 @@ async function patch(input, opts = {}) {
                 const ruLocaleObj = `Object.assign({},${zhVar},${ruObjStr})`;
                 return `"zh-CN":${ruLocaleObj},"ru-RU":${ruLocaleObj},${enPart}`;
             });
+          patched = true;
+        }
+
+        const inlineLocale = patchInlineLocaleObjects(code, ruObjStr);
+        if (inlineLocale.count > 0) {
+            code = inlineLocale.code;
+            dictPatchedCount += inlineLocale.count;
             patched = true;
+            push('ok', 'Встроенный русский словарь: ' + fn + ' (' + inlineLocale.count + ')');
         }
 
         const refreshedDict = refreshPatchedRuLocaleObjects(code, ruObjStr);
@@ -2066,13 +2517,16 @@ async function patch(input, opts = {}) {
         let code = fs.readFileSync(fp, 'utf-8');
         const hardcoded = applyHardcodedPatches(code);
         const visible = applyVisibleUiPatches(hardcoded.code);
-        if (hardcoded.count > 0 || visible.count > 0) {
-          fs.writeFileSync(fp, visible.code, 'utf-8');
-          hardcodedCount += hardcoded.count + visible.count;
-          push('ok', 'Хардкод-патч: ' + fn + ' (' + (hardcoded.count + visible.count) + ')');
+        const finalUi = applyFinalUiCorrections(visible.code);
+        if (hardcoded.count > 0 || visible.count > 0 || finalUi.count > 0) {
+          fs.writeFileSync(fp, finalUi.code, 'utf-8');
+          hardcodedCount += hardcoded.count + visible.count + finalUi.count;
+          push('ok', 'Хардкод-патч: ' + fn + ' (' + (hardcoded.count + visible.count + finalUi.count) + ')');
         }
       }
       push(hardcodedCount > 0 ? 'ok' : 'warn', 'Захардкоженных строк пропатчено: ' + hardcodedCount);
+      const rendererOfficialPluginLabelPatchedCount = patchRendererOfficialPluginLabels(tempExtract, push);
+      const trayPatchedCount = patchTrayMenuInMainProcess(tempExtract, push);
       const runtimeReasoningPatchedCount = patchRuntimeReasoningLanguage(tempExtract, push);
 
       onProgress(6, TOTAL, 'Шаг 6/7: Проверка внедрений...', 'info');
@@ -2081,14 +2535,28 @@ async function patch(input, opts = {}) {
       const pluginPatchedCount = patchGlmPackageMetadata(info.root, push);
       const skillPatchedCount = patchSkillMetadata(info.root, push);
       const pluginCachePatchedCount = patchPluginCacheMetadata(info.root, push);
+      const officialMarketplacePatchedCount = patchOfficialMarketplaceLabels(push);
+      const marketplacePatchedCount = patchMarketplaceMetadata(info.root, push);
+      const agentPatchedCount = patchAgentCardDescriptions(info.root, push);
 
-      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0) {
+      if (translated === 0 && dictPatchedCount === 0 && localePatchedCount === 0 && hardcodedCount === 0 && rendererOfficialPluginLabelPatchedCount === 0 && trayPatchedCount === 0 && runtimeReasoningPatchedCount === 0 && pluginPatchedCount === 0 && skillPatchedCount === 0 && pluginCachePatchedCount === 0 && officialMarketplacePatchedCount === 0 && marketplacePatchedCount === 0 && agentPatchedCount === 0) {
         throw new Error('Ни одна замена не сработала — версия ZCode не поддерживается этим патчем');
       }
 
       onProgress(7, TOTAL, 'Шаг 7/7: Пересборка...', 'info');
-      try { fs.rmSync(asarPath, { force: true }); } catch {}
-      await asar.createPackage(tempExtract, asarPath);
+      const pendingAsarPath = asarPath + '.ru-pending';
+      const swapBackupPath = asarPath + '.ru-swap';
+      try { fs.rmSync(pendingAsarPath, { force: true }); } catch {}
+      try { fs.rmSync(swapBackupPath, { force: true }); } catch {}
+      await asar.createPackage(tempExtract, pendingAsarPath);
+      fs.renameSync(asarPath, swapBackupPath);
+      try {
+        fs.renameSync(pendingAsarPath, asarPath);
+      } catch (swapError) {
+        fs.renameSync(swapBackupPath, asarPath);
+        throw swapError;
+      }
+      try { fs.rmSync(swapBackupPath, { force: true }); } catch {}
       try { fs.rmSync(tempExtract, { recursive: true, force: true }); } catch {}
       push('ok', 'Пересобрано: ' + asarPath);
 
