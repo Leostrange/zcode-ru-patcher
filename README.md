@@ -11,8 +11,8 @@
   </p>
 
   <p>
-    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6">
-      <img alt="Release" src="https://img.shields.io/badge/release-v6.3.6-2563eb?style=for-the-badge">
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.4.0">
+      <img alt="Release" src="https://img.shields.io/badge/release-v6.4.0-2563eb?style=for-the-badge">
     </a>
     <img alt="Platform" src="https://img.shields.io/badge/platform-Windows-0078d4?style=for-the-badge">
     <img alt="Electron" src="https://img.shields.io/badge/Electron-191970?style=for-the-badge&logo=electron&logoColor=white">
@@ -20,7 +20,7 @@
   </p>
 
   <p>
-    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6"><b>Скачать патч</b></a>
+    <a href="https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.4.0"><b>Скачать патч</b></a>
     ·
     <a href="assets/Russian_UI_ZCode.mp4">Смотреть полное MP4-демо</a>
     ·
@@ -48,20 +48,20 @@ ZCode RU Patcher - это компактный Windows-патчер для ру�
 
 1. Установите [ZCode](https://zcode.z.ai/cn) с официального сайта.
 2. Если требуется обновить IDE - обновите её перед установкой патча.
-3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6), запустите его и пропатчите ZCode.
+3. Скачайте патч из [Releases](https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.4.0), запустите его и пропатчите ZCode.
 4. Дождитесь завершения процесса. Не запускайте ZCode и не мешайте патчеру, пока установка не закончится.
 
 После каждого обновления ZCode патч придётся установить заново.
 
-## Что нового в v6.3.6
+## Что нового в v6.4.0
 
 - Переведены карточки, фильтры, категории и действия каталога плагинов.
 - Переведены описания навыков, субагентов и плагинов из кешей `.zcode` и `.codex`, включая источники Claude Code.
 - Добавлен безопасный запасной русский текст для новых описаний, которые отсутствуют в статическом словаре.
 - Исправлены смешанные русско-китайские строки: выбор проекта, режим разрешений, фоновая работа, таймеры и подписи задач.
 - Исправлена упаковка внутреннего `app.asar`: в него включены `node_modules/@electron/asar` и все зависимости, необходимые для запуска патчера.
-- В окне программы, свойствах EXE, имени файла и вложенном приложении указана единая версия `v6.3.6`.
-- Патчер пересобран как `ZCode-Ru-Patcher-v6.3.6.exe`.
+- В окне программы, свойствах EXE, имени файла и вложенном приложении указана единая версия `v6.4.0`.
+- Патчер пересобран как `ZCode-Ru-Patcher-v6.4.0.exe`.
 
 Полный changelog: [CHANGELOG.md](CHANGELOG.md).
 
@@ -99,16 +99,16 @@ ZCode RU Patcher - это компактный Windows-патчер для ру�
 Готовый патч находится в разделе Releases:
 
 ```text
-ZCode-Ru-Patcher-v6.3.6.exe
+ZCode-Ru-Patcher-v6.4.0.exe
 ```
 
 SHA256:
 
 ```text
-648629746E02606F9B51021508061FDB57C75DDCD8AE804DA7B7D5CFAFD410A7
+B45A931E5ED7BC7DF02151FEA04A5DD4AFBEFF1274BBAA4041F66636EF498AA0
 ```
 
-Ссылка: https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.3.6
+Ссылка: https://github.com/Leostrange/zcode-ru-patcher/releases/tag/v6.4.0
 
 ## Технологии
 
